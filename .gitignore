@@ -36,3 +36,5 @@ capybara-*.html
 .rspec
 /spec/tmp
 /.secret
+/bower_components
+/node_modules
