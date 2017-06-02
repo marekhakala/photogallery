@@ -22,12 +22,14 @@ group :development, :test do
   gem 'httparty', '~> 0.14'
   gem 'pry-byebug', '~> 3.4'
   gem 'rspec-rails', '~> 3.5'
+  gem 'mongoid-rspec', '~> 3.0'
   gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
   gem 'webrick', '~> 1.3', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 end
 
 gem 'pg', '~> 0.19'
 gem 'mongoid', '~> 5.1'
+gem 'database_cleaner', '~> 1.5'
 gem 'puma', '~> 3.6', platforms: :ruby
 
 source 'https://rails-assets.org' do
