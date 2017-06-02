@@ -140,7 +140,7 @@ gulp.task("dist:fonts", function() {
 
 // Build and copy HTML files into a dist directory
 gulp.task("dist:html", function() {
-  return gulp.src(cfg.html.src).pipe(debug())
+  return gulp.src(cfg.html.src, {base: srcPath + "/javascripts"}).pipe(debug())
     .pipe(htmlMin({collapseWhitespace: true}))
     .pipe(gulp.dest(distPath)).pipe(debug());
 });
