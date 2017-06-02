@@ -4,6 +4,8 @@
   angular
     .module("spa")
     .constant("spa.APP_CONFIG", {
-      main_page_html: "<%= asset_path('spa/pages/main.html') %>"
+      server_url: "<%= ENV['RAILS_API_URL'] %>",
+      main_page_html: "<%= asset_path('spa/pages/main.html') %>",
+      foos_html: "<%= asset_path('spa/foos/foos.html') %>"
     });
 })();

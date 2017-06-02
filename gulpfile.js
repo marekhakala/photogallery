@@ -126,7 +126,7 @@ gulp.task("run", ["build", "browserSync"], function () {
 gulp.task("dist:assets", ["build"], function() {
   return gulp.src(cfg.root_html.src).pipe(debug())
     .pipe(useref({ searchPath: devResourcePath }))
-    .pipe(gulpif(["**/*constant.js"], replace(cfg.apiUrl.dev,cfg.apiUrl.prd)))
+    .pipe(gulpif(["**/*.js"], replace(cfg.apiUrl.dev,cfg.apiUrl.prd)))
     .pipe(gulpif(["**/*.js"], uglify()))
     .pipe(gulpif(["**/*.css"], cssMin()))
     .pipe(gulp.dest(distPath)).pipe(debug());
