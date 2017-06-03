@@ -32,6 +32,9 @@ gem 'mongoid', '~> 5.1'
 gem 'database_cleaner', '~> 1.5'
 gem 'puma', '~> 3.6', platforms: :ruby
 
+gem 'faker', '~>1.6'
+gem 'factory_girl_rails', '~>4.7'
+
 source 'https://rails-assets.org' do
   gem 'rails-assets-bootstrap', '~> 3.3'
   gem 'rails-assets-angular', '~> 1.5'
