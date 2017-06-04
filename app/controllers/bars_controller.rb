@@ -1,5 +1,6 @@
 class BarsController < ApplicationController
   before_action :set_bar, only: [:show, :update, :destroy]
+  wrap_parameters :bar, include: ["name"]
 
   # GET /bars
   # GET /bars.json
@@ -48,7 +49,6 @@ class BarsController < ApplicationController
   end
 
   private
-
     def set_bar
       @bar = Bar.find(params[:id])
     end
