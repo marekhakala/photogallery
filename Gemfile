@@ -23,6 +23,14 @@ group :development, :test do
   gem 'pry-byebug', '~> 3.4'
   gem 'rspec-rails', '~> 3.5'
   gem 'mongoid-rspec', '~> 3.0'
+
+  gem 'capybara', '~> 2.10'
+  gem 'poltergeist', '~> 1.11'
+  gem 'selenium-webdriver', '~> 2.53'
+  gem 'chromedriver-helper', '~> 1.0'
+  gem 'launchy', '~> 2.4'
+  gem 'simplecov', '~> 0', require: false
+
   gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
   gem 'webrick', '~> 1.3', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 end
