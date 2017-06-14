@@ -1,7 +1,18 @@
-/*
- * layout.css
- */
 
 body {
   background-color: #d2b48c;
+}
+
+form .invalid {
+  color: #ff0000;
+}
+
+.fullsize {
+  padding-right: 0px;
+  padding-left: 0px;
+}
+
+.nav li form {
+  padding-left: 10px;
+  padding-right: 10px;
 }

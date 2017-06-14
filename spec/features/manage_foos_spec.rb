@@ -12,8 +12,9 @@ RSpec.feature "ManageFoos", type: :feature, :js=>true do
     let(:foos) { (1..5).map{ FactoryGirl.create(:foo) }.sort_by { |v| v["name"] } }
 
     scenario "when no instances exist" do
-      visit root_path
-      within(:xpath,FOO_LIST_XPATH) do
+      visit "#{root_path}/#/"
+
+      within(:xpath, FOO_LIST_XPATH) do
         expect(page).to have_no_css("li")
         expect(page).to have_css("li", count: 0)
         expect(all("ul li").size).to eq(0)
@@ -21,7 +22,7 @@ RSpec.feature "ManageFoos", type: :feature, :js=>true do
     end
 
     scenario "when instances exist" do
-      visit root_path if foos
+      visit "#{root_path}/#/" if foos
 
       within(:xpath, FOO_LIST_XPATH) do
         expect(page).to have_css("li:nth-child(#{foos.count})")
@@ -37,9 +38,14 @@ RSpec.feature "ManageFoos", type: :feature, :js=>true do
 
   feature "add new Foo" do
     background(:each) do
-      visit root_path
+      visit "#{root_path}/#/"
+      
       expect(page).to have_css("h3", text: "Foos")
       expect(page).to have_css("li", count: 0)
+
+      within(:xpath,FOO_LIST_XPATH) do
+        expect(page).to have_css("li", count: 0)
+      end
     end
 
     scenario "has input form" do
@@ -79,7 +85,7 @@ RSpec.feature "ManageFoos", type: :feature, :js=>true do
       create_foo foo_state
 
       within(:xpath,FOO_LIST_XPATH) do
-        expect(page).to have_css("li", count:1)
+        expect(page).to have_css("li", count: 1)
       end
     end
   end
@@ -93,15 +99,19 @@ RSpec.feature "ManageFoos", type: :feature, :js=>true do
       existing_name = foo_state[:name]
       new_name = FactoryGirl.attributes_for(:foo)[:name]
 
-      expect(page).to have_css("li", count: 1)
-      expect(page).to have_css("li", text: existing_name)
-      expect(page).to have_no_css("li", text: new_name)
+      within(:xpath, FOO_LIST_XPATH) do
+        expect(page).to have_css("li", count: 1)
+        expect(page).to have_css("li", text: existing_name)
+        expect(page).to have_no_css("li", text: new_name)
+      end
 
       update_foo(existing_name, new_name)
 
-      expect(page).to have_css("li", count: 1)
-      expect(page).to have_no_css("li", text: existing_name)
-      expect(page).to have_css("li", text: new_name)
+      within(:xpath, FOO_LIST_XPATH) do
+        expect(page).to have_css("li", count: 1)
+        expect(page).to have_no_css("li", text: existing_name)
+        expect(page).to have_css("li", text: new_name)
+      end
     end
 
     scenario "can be deleted" do

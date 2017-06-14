@@ -49,4 +49,6 @@ source 'https://rails-assets.org' do
   gem 'rails-assets-angular', '~> 1.5'
   gem 'rails-assets-angular-ui-router', '~> 0.3'
   gem 'rails-assets-angular-resource', '~> 1.5'
+  gem 'rails-assets-ng-token-auth', '~>0.0'
+  gem 'rails-assets-angular-cookie'
 end

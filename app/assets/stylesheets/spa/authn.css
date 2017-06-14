@@ -1,0 +1,14 @@
+
+span#user_id {
+  display: none;
+}
+
+#login-form #new-account label {
+  width: auto;
+  margin-top: 5px;
+  margin-right: 10px;
+}
+
+div#logout-identity {
+  text-align: center;
+}

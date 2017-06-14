@@ -8,7 +8,7 @@ class CreateThingImages < ActiveRecord::Migration
     end
 
     create_table :things do |t|
-      t.string :name, {null: false}
+      t.string :name, { null: false }
       t.text :description
       t.text :notes
 
