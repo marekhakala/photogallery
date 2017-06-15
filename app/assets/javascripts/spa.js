@@ -28,3 +28,14 @@
 //= require spa/foos/foos.service
 //= require spa/foos/foos.controller
 //= require spa/foos/foos.directive
+
+//= require spa/subjects/subjects.module
+//= require spa/subjects/images/images.service
+//= require spa/subjects/images/image_things.service
+//= require spa/subjects/images/image_linkable_things.service
+//= require spa/subjects/images/images.component
+//= require spa/subjects/images/images_authz.directive
+//= require spa/subjects/things/things.service
+//= require spa/subjects/things/thing_images.service
+//= require spa/subjects/things/things_authz.directive
+//= require spa/subjects/things/things.component

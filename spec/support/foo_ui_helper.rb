@@ -8,12 +8,13 @@ module FooUiHelper
 
     within(:xpath, FOO_FORM_XPATH) do
       fill_in("name", with: foo_state[:name])
-      click_button("Create Foo")
+      expect(page).to have_field("name", with: foo_state[:name])
+      click_button("Create Foo", disabled: false)
     end
 
     within(:xpath, FOO_LIST_XPATH) do
       using_wait_time 5 do
-        expect(page).to have_css("li a",:text=>foo_state[:name])
+        expect(page).to have_css("li a", text: foo_state[:name])
       end
     end
   end
@@ -26,6 +27,7 @@ module FooUiHelper
       find("a", text: existing_name).click
     end
     within(:xpath, FOO_FORM_XPATH) do
+      find_field("name", readonly: false, wait: 5)
       fill_in("name", with: new_name)
       click_button("Update Foo")
     end

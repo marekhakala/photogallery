@@ -185,9 +185,10 @@ RSpec.feature "Authns", type: :feature, js: true do
     scenario "can no longer access authenticated resources" do
       logout
       checkme
+      
       within ("div.checkme-user") do
         expect(page).to have_no_css("label", text: /#{user_props[:name]}/)
-        expect(page).to have_css("label", text: /Authorized users only/)
+        expect(page).to have_css("label", text: /Authorized users only/, wait: 5)
       end
     end
   end
