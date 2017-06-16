@@ -5,6 +5,7 @@ gem 'rails-api', '~> 0.4'
 gem 'pry-rails', '~> 0.3'
 gem 'rack-cors', '~> 0.4', require: 'rack/cors'
 gem 'jbuilder', '~> 2.0'
+gem 'pundit', '~> 1.1'
 gem 'devise_token_auth', '~> 0.1'
 
 gem 'coffee-rails', '~> 4.1'
