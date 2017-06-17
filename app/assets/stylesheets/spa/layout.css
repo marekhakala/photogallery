@@ -7,6 +7,14 @@ form .invalid {
   color: #ff0000;
 }
 
+[readonly='readonly'] {
+  background-color: inherit;
+}
+
+button:disabled {
+  color:#717782;
+}
+
 .fullsize {
   padding-right: 0px;
   padding-left: 0px;

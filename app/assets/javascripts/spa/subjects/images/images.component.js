@@ -11,6 +11,7 @@
       templateUrl: imageEditorTemplateUrl,
       controller: ImageEditorController,
       bindings: { authz: "<" },
+      require: { imagesAuthz: "^sdImagesAuthz" }
     });
 
   imageSelectorTemplateUrl.$inject = ["spa.config.APP_CONFIG"];
@@ -23,8 +24,8 @@
     return APP_CONFIG.image_editor_html;
   }
 
-  ImageSelectorController.$inject = ["$scope", "$stateParams", "spa.subjects.Image"];
-  function ImageSelectorController($scope, $stateParams, Image) {
+  ImageSelectorController.$inject = ["$scope", "$stateParams", "spa.authz.Authz", "spa.subjects.Image"];
+  function ImageSelectorController($scope, $stateParams, Authz, Image) {
     var vm = this;
 
     vm.$onInit = function() {
@@ -32,15 +33,22 @@
       if (!$stateParams.id) {
         vm.items = Image.query();
       }
+      $scope.$watch(function() { return Authz.getAuthorizedUserId(); },
+                    function() {
+                      if (!$stateParams.id) {
+                        vm.items = Image.query();
+                      }
+                    });
     }
 
     return;
   }
 
-  ImageEditorController.$inject = ["$scope","$q", "$state", "$stateParams", "spa.subjects.Image",
-                    "spa.subjects.ImageThing", "spa.subjects.ImageLinkableThing"];
+  ImageEditorController.$inject = ["$scope","$q", "$state", "$stateParams", "spa.authz.Authz",
+                    "spa.subjects.Image", "spa.subjects.ImageThing", "spa.subjects.ImageLinkableThing"];
   function ImageEditorController($scope, $q, $state, $stateParams, Image, ImageThing,ImageLinkableThing) {
     var vm = this;
+    vm.selected_linkables = [];
     vm.create = create;
     vm.clear = clear;
     vm.update = update;
@@ -49,17 +57,21 @@
 
     vm.$onInit = function() {
       console.log("ImageEditorController",$scope);
-      if ($stateParams.id) {
-        reload($stateParams.id);
-        $scope.$watch(function() { return vm.authz.authenticated }, function() { reload($stateParams.id); });
-      } else {
-        newResource();
-      }
+      $scope.$watch(function() { return Authz.getAuthorizedUserId(); },
+                    function() {
+                      if ($stateParams.id) {
+                        reload($stateParams.id);
+                      } else {
+                        newResource();
+                      }
+      });
     }
     return;
 
     function newResource() {
+      console.log("newResource()");
       vm.item = new Image();
+      vm.imagesAuthz.newItem(vm.item);
       return vm.item;
     }
 
@@ -70,6 +82,7 @@
       vm.item = Image.get({ id: itemId });
       vm.things = ImageThing.query({ image_id: itemId });
       vm.linkable_things = ImageLinkableThing.query({ image_id: itemId });
+      vm.imagesAuthz.newItem(vm.item);
       $q.all([vm.item.$promise, vm.things.$promise]).catch(handleError);
     }
 
