@@ -6,6 +6,8 @@ gem 'pry-rails', '~> 0.3'
 gem 'rack-cors', '~> 0.4', require: 'rack/cors'
 gem 'jbuilder', '~> 2.0'
 gem 'pundit', '~> 1.1'
+gem 'exifr', '~> 1.2'
+gem 'mini_magick', '~> 4.5'
 gem 'devise_token_auth', '~> 0.1'
 
 gem 'coffee-rails', '~> 4.1'
