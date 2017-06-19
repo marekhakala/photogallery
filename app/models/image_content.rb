@@ -53,11 +53,15 @@ class ImageContent
       self.height = nil
     end
 
-    self[:content]=self.class.to_binary(value)
+    self[:content] = self.class.to_binary(value)
     exif.tap do |xf|
       self.width = xf.width   if xf
       self.height = xf.height if xf
     end
+  end
+
+  def suffix
+    "jpg" if CONTENT_TYPES.include? content_type
   end
 
   def self.to_binary(value)

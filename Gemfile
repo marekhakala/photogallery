@@ -47,11 +47,15 @@ gem 'puma', '~> 3.6', platforms: :ruby
 gem 'faker', '~>1.6'
 gem 'factory_girl_rails', '~>4.7'
 
-source 'https://rails-assets.org' do
+#source 'https://rails-assets.org' do
+source 'http://insecure.rails-assets.org' do
   gem 'rails-assets-bootstrap', '~> 3.3'
   gem 'rails-assets-angular', '~> 1.5'
   gem 'rails-assets-angular-ui-router', '~> 0.3'
   gem 'rails-assets-angular-resource', '~> 1.5'
-  gem 'rails-assets-ng-token-auth', '~>0.0'
+  gem 'rails-assets-ng-token-auth', '~> 0.0'
   gem 'rails-assets-angular-cookie'
+  gem 'rails-assets-ng-file-upload', '~> 12.2'
+  gem 'rails-assets-ng-file-upload-shim'
+  gem 'rails-assets-ui-cropper', '~> 1.0'
 end

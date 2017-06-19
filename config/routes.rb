@@ -17,6 +17,8 @@ Rails.application.routes.draw do
     resources :things, except: [:new, :edit] do
       resources :thing_images, only: [:index, :create, :update, :destroy]
     end
+
+    get "images/:id/content", as: :image_content, controller: :images, action: :content, defaults: { format: :jpg }
   end
 
   get 'authn/whoami', defaults: { format: :json }

@@ -1,5 +1,5 @@
 (function() {
   "use strict";
 
-  angular.module("spa-demo.authz", []);
+  angular.module("spa.authz", []);
 })();

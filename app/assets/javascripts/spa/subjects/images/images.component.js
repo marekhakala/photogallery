@@ -44,9 +44,9 @@
     return;
   }
 
-  ImageEditorController.$inject = ["$scope","$q", "$state", "$stateParams", "spa.authz.Authz",
+  ImageEditorController.$inject = ["$scope","$q", "$state", "$stateParams", "spa.authz.Authz", "spa.layout.DataUtils",
                     "spa.subjects.Image", "spa.subjects.ImageThing", "spa.subjects.ImageLinkableThing"];
-  function ImageEditorController($scope, $q, $state, $stateParams, Image, ImageThing,ImageLinkableThing) {
+  function ImageEditorController($scope, $q, $state, $stateParams, Authz, DataUtils, Image, ImageThing,ImageLinkableThing) {
     var vm = this;
     vm.selected_linkables = [];
     vm.create = create;
@@ -54,6 +54,7 @@
     vm.update = update;
     vm.remove = remove;
     vm.linkThings = linkThings;
+    vm.setImageContent = setImageContent;
 
     vm.$onInit = function() {
       console.log("ImageEditorController",$scope);
@@ -87,8 +88,16 @@
     }
 
     function clear() {
-      newResource();
-      $state.go(".", { id: null });
+      if (!vm.item.id) {
+        $state.reload();
+      } else {
+        $state.go(".", { id: null });
+      }
+    }
+
+    function setImageContent(dataUri) {
+      console.log("setImageContent", dataUri ? dataUri.length : null);
+      vm.item.image_content = DataUtils.getContentFromDataUri(dataUri);
     }
 
     function create() {
