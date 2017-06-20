@@ -8,13 +8,13 @@ gem 'jbuilder', '~> 2.0'
 gem 'pundit', '~> 1.1'
 gem 'exifr', '~> 1.2'
 gem 'mini_magick', '~> 4.5'
+gem 'geokit-rails', '~> 2.2'
 gem 'devise_token_auth', '~> 0.1'
 
 gem 'coffee-rails', '~> 4.1'
 gem 'jquery-rails', '~> 4.2'
 gem 'sass-rails', '~> 5.0'
 gem 'uglifier', '~> 3.0'
-gem 'jbuilder', '~> 2.0'
 
 group :development do
   gem 'spring', '~> 2.0'

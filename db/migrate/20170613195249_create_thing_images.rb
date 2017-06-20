@@ -3,6 +3,8 @@ class CreateThingImages < ActiveRecord::Migration
     create_table :images do |t|
       t.string :caption
       t.integer :creator_id, { null: false }
+      t.float :lng
+      t.float :lat
 
       t.timestamps null: false
     end
@@ -24,7 +26,7 @@ class CreateThingImages < ActiveRecord::Migration
       t.timestamps null: false
     end
 
-    add_index :images, :creator_id
+    add_index :images, [:creator_id, :lng, :lat]
     add_index :things, :name
     add_index :thing_images, [:image_id, :thing_id], unique: true
   end
