@@ -1,12 +1,16 @@
 module SubjectsUiHelper
-
-  def visit_images images
+  def visit_images images = nil
+    images ||= Image.all
     visit "#{ui_path}/#/images/"
 
     within("sd-image-selector") do
       expect(page).to have_css(".image-list")
       expect(page).to have_css(".image-list li", count: images.count, wait: 5)
     end
+  end
+
+  def image_caption image
+    image.caption || "(no caption #{image.id})"
   end
 
   def get_linkables image
@@ -19,7 +23,10 @@ module SubjectsUiHelper
       expect(page).to have_css("span.image_id", text: image.id, visible: false)
       expect(page).to have_css(".image-controls")
       expect(page).to have_css("ul.image-things li span.thing_id", visible: false,
-          count: ThingImage.where(image: image).count, wait: 5)
+                               count: ThingImage.where(image: image).count, wait: 5)
+      expect(page).to have_css("div.image-existing img", count: 1, wait: 5)
+
+      wait_until { find("div.image-existing img")[:complete] == true }
     end
 
     expected_linkables ||= get_linkables(image).size
@@ -34,22 +41,24 @@ module SubjectsUiHelper
     end
 
     within("sd-image-editor .image-form") do
-      expect(page).to have_css("span.image_id", text: image.id, visible: false)
+      expect(page).to have_css("span.image_id", text: image.id, visible: false, wait: 5)
       expect(page).to have_css(".image-controls")
+      expect(page).to have_css("div.image-existing img", count: 1, wait: 5)
     end
   end
 
-  def displayed_caption(image)
+  def displayed_caption image
     image.caption ? image.caption : "(no caption #{image.id})"
   end
 
   def visit_thing thing
-    unless page.has_css?("sd-thing-editor .thing-form span.thing_id", text: thing.id, visible: false)
+    unless page.has_css?("sd-thing-editor .thing-form span.thing_id",
+                          text: thing.id, visible: false)
       visit "#{ui_path}/#/things/#{thing.id}"
     end
 
     within("sd-thing-editor .thing-form") do
-      expect(page).to have_css("span.thing_id", text: thing.id, visible: false)
+      expect(page).to have_css("span.thing_id", text: thing.id, visible: false, wait: 5)
     end
   end
 
@@ -58,8 +67,15 @@ module SubjectsUiHelper
 
     within("sd-thing-editor .thing-form") do
       expect(page).to have_css("span.thing_id", text: thing.id, visible: false)
-      expect(page).to have_css("ul.thing-images li span.image_id", visible: false,
-            count: ThingImage.where(thing: thing).count, wait: 5)
+      expect(page).to have_css("sd-image-viewer .image-area img", visible: false,
+                              count: ThingImage.where(thing: thing).count, wait: 5)
+
+      wait_until { find("sd-image-viewer .image-area img")[:complete] == true }
+
+      if (page.has_css?("ul.thing-images"))
+        expect(page).to have_css("ul.thing-images li span.image_id", visible: false,
+                                count: ThingImage.where(thing: thing).count, wait: 5)
+      end
     end
   end
 

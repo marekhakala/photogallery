@@ -19,9 +19,12 @@ Rails.application.routes.draw do
     end
 
     get "images/:id/content", as: :image_content, controller: :images, action: :content, defaults: { format: :jpg }
+    get "geocoder/addresses" => "geocoder#addresses"
+    get "geocoder/positions" => "geocoder#positions"
+    get "subjects" => "thing_images#subjects"
   end
 
-  get 'authn/whoami', defaults: { format: :json }
-  get 'authn/checkme'
+  get "authn/whoami", defaults: { format: :json }
+  get "authn/checkme"
   mount_devise_token_auth_for 'User', at: 'auth'
 end

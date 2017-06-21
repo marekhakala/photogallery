@@ -8,8 +8,8 @@ class ThingImagesController < ApplicationController
   before_action :get_thing_image, only: [:update, :destroy]
   before_action :authenticate_user!, only: [:create, :update, :destroy]
 
-  after_action :verify_authorized
-  #after_action :verify_policy_scoped, only: [:linkable_things]
+  after_action :verify_authorized, except: [:subjects]
+  before_action :origin, only: [:subjects]
 
   def index
     authorize @thing, :get_images?
@@ -25,12 +25,30 @@ class ThingImagesController < ApplicationController
   def linkable_things
     authorize Thing, :get_linkables?
     image = Image.find(params[:image_id])
-    #@things = policy_scope(Thing.not_linked(image))
-    #need to exclude admins from seeing things they cannot link
     @things = Thing.not_linked(image)
-    @things = ThingPolicy::Scope.new(current_user,@things).user_roles(true,false)
+    @things = ThingPolicy::Scope.new(current_user,@things).user_roles(true, false)
     @things = ThingPolicy.merge(@things)
     render "things/index"
+  end
+
+  def subjects
+    expires_in 1.minute, public: true
+    miles = params[:miles] ? params[:miles].to_f : nil
+    subject = params[:subject]
+    distance = params[:distance] ||= "false"
+    reverse = params[:order] && params[:order].downcase == "desc"
+    last_modified = ThingImage.last_modified
+    state = "#{request.headers['QUERY_STRING']}:#{last_modified}"
+    eTag = "#{Digest::MD5.hexdigest(state)}"
+
+    if stale? etag: eTag
+      @thing_images = ThingImage.within_range(@origin, miles, reverse)
+                                .with_name.with_caption.with_position
+      @thing_images = @thing_images.things if subject && subject.downcase == "thing"
+      @thing_images = ThingImage.with_distance(@origin, @thing_images) if distance.downcase == "true"
+
+      render "thing_images/index"
+    end
   end
 
   def create
@@ -67,6 +85,7 @@ class ThingImagesController < ApplicationController
 
   def destroy
     authorize @thing, :remove_image?
+    @thing_image.image.touch
 
     @thing_image.destroy
     head :no_content
@@ -94,5 +113,14 @@ class ThingImagesController < ApplicationController
 
     def thing_image_update_params
       params.require(:thing_image).permit(:priority)
+    end
+
+    def origin
+      case
+      when params[:lng] && params[:lat]
+        @origin = Point.new(params[:lng].to_f, params[:lat].to_f)
+      else
+        raise ActionController::ParameterMissing.new("an origin [lng/lat] required")
+      end
     end
 end

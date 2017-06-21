@@ -26,4 +26,19 @@ class ThingImage < ActiveRecord::Base
     scope.select("-1 as distance").with_position
         .each { |ti| ti.distance = ti.distance_from(origin) }
   end
+
+  def self.last_modified
+=begin
+    m1=Thing.maximum(:updated_at)
+    m2=Image.maximum(:updated_at)
+    m3=ThingImage.maximum(:updated_at)
+    [m1,m2,m3].max
+=end
+    unions = [Thing, Image, ThingImage].map { |t|
+          "select max(updated_at) as modified from #{t.table_name}\n"
+    }.join(" union\n")
+    sql = "select max(modified) as last_modified from (\n#{unions}) as x"
+    value = connection.select_value(sql)
+    Time.parse(value + "UTC") if value
+  end
 end
