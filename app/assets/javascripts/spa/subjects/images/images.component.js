@@ -24,29 +24,35 @@
     return APP_CONFIG.image_editor_html;
   }
 
-  ImageSelectorController.$inject = ["$scope", "$stateParams", "spa.authz.Authz", "spa.subjects.Image"];
+  ImageSelectorController.$inject = ["$scope",
+                                     "$stateParams",
+                                     "spa.authz.Authz",
+                                     "spa.subjects.Image"];
   function ImageSelectorController($scope, $stateParams, Authz, Image) {
     var vm = this;
 
     vm.$onInit = function() {
       console.log("ImageSelectorController", $scope);
-      if (!$stateParams.id) {
-        vm.items = Image.query();
-      }
       $scope.$watch(function() { return Authz.getAuthorizedUserId(); },
                     function() {
                       if (!$stateParams.id) {
                         vm.items = Image.query();
                       }
-                    });
+      });
     }
-
     return;
   }
 
-  ImageEditorController.$inject = ["$scope","$q", "$state", "$stateParams", "spa.authz.Authz", "spa.layout.DataUtils",
-                    "spa.subjects.Image", "spa.subjects.ImageThing", "spa.subjects.ImageLinkableThing"];
-  function ImageEditorController($scope, $q, $state, $stateParams, Authz, DataUtils, Image, ImageThing,ImageLinkableThing) {
+  ImageEditorController.$inject = ["$scope","$q",
+                                   "$state", "$stateParams",
+                                   "spa.authz.Authz",
+                                   "spa.layout.DataUtils",
+                                   "spa.subjects.Image",
+                                   "spa.subjects.ImageThing",
+                                   "spa.subjects.ImageLinkableThing",
+                                   "spa.geoloc.geocoder"];
+  function ImageEditorController($scope, $q, $state, $stateParams,
+                                 Authz, DataUtils, Image, ImageThing,ImageLinkableThing, geocoder) {
     var vm = this;
     vm.selected_linkables = [];
     vm.create = create;
@@ -55,9 +61,10 @@
     vm.remove = remove;
     vm.linkThings = linkThings;
     vm.setImageContent = setImageContent;
+    vm.locationByAddress = locationByAddress;
 
     vm.$onInit = function() {
-      console.log("ImageEditorController",$scope);
+      console.log("ImageEditorController", $scope);
       $scope.$watch(function() { return Authz.getAuthorizedUserId(); },
                     function() {
                       if ($stateParams.id) {
@@ -85,6 +92,10 @@
       vm.linkable_things = ImageLinkableThing.query({ image_id: itemId });
       vm.imagesAuthz.newItem(vm.item);
       $q.all([vm.item.$promise, vm.things.$promise]).catch(handleError);
+
+      vm.item.$promise.then(function(image) {
+        vm.location = geocoder.getLocationByPosition(image.position);
+      });
     }
 
     function clear() {
@@ -101,9 +112,10 @@
     }
 
     function create() {
-      vm.item.$save().then(function() {
-        $state.go(".", {id: vm.item.id});
-      }, handleError);
+      vm.item.$save().then(
+        function() {
+           $state.go(".", {id: vm.item.id});
+        }, handleError);
     }
 
     function update() {
@@ -124,11 +136,12 @@
       vm.selected_linkables = [];
       console.log("waiting for promises", promises);
 
-      $q.all(promises).then(function(response) {
-        console.log("promise.all response", response);
-        $scope.imageform.$setPristine();
-        reload();
-      }, handleError);
+      $q.all(promises).then(
+        function(response) {
+          console.log("promise.all response", response);
+          $scope.imageform.$setPristine();
+          reload();
+        }, handleError);
     }
 
     function remove() {
@@ -140,9 +153,18 @@
         }, handleError);
     }
 
+    function locationByAddress(address) {
+      console.log("locationByAddress for", address);
+      geocoder.getLocationByAddress(address).$promise.then(
+        function(location) {
+          vm.location = location;
+          vm.item.position = location.position;
+          console.log("location", vm.location);
+        });
+    }
+
     function handleError(response) {
       console.log("error", response);
-
       if (response.data) {
         vm.item["errors"] = response.data.errors;
       }
@@ -151,7 +173,9 @@
         vm.item["errors"] = {}
         vm.item["errors"]["full_messages"] = [response];
       }
+      
       $scope.imageform.$setPristine();
     }
   }
+
 })();

@@ -14,14 +14,14 @@
 #
 # The `.rspec` file also contains a few flags that are not defaults but that
 # users commonly want.
-#
+
 require 'mongoid-rspec'
 require 'capybara/rspec'
 require_relative 'support/database_cleaners.rb'
 require_relative 'support/api_helper.rb'
 require_relative 'support/ui_helper.rb'
 
-browser = :chrome
+browser = :firefox
 Capybara.register_driver :selenium do |app|
   if browser == :chrome
     if ENV['CHROMEDRIVER_BINARY_PATH']
@@ -35,38 +35,35 @@ Capybara.register_driver :selenium do |app|
       Selenium::WebDriver::Firefox::Binary.path = ENV['FIREFOX_BINARY_PATH']
     end
 
-    Capybara::Selenium::Driver.new(app, browser: :firefox)
+    profile = Selenium::WebDriver::Firefox::Profile.new
+    profile["geo.prompt.testing"] = true
+    profile["geo.prompt.testing.allow"] = true
+    Capybara::Selenium::Driver.new(app, browser: :firefox, profile: profile)
   end
 end
 
 require 'capybara/poltergeist'
-
 Capybara.configure do |config|
   config.default_driver = :rack_test
-  # used when :js=>true
   config.javascript_driver = :poltergeist
-  #config.javascript_driver = :selenium
 end
 
 Capybara.register_driver :poltergeist do |app|
   Capybara::Poltergeist::Driver.new(app,
-    js_errors: false,
-    phantomjs_logger: StringIO.new,
-#   logger: STDERR
-  )
+  js_errors: false, phantomjs_logger: StringIO.new)
 end
 
 if ENV["COVERAGE"] == "true"
-  require 'simplecov'
-  SimpleCov.start do
-    add_filter "/spec"
-    add_filter "/config"
-    add_group "foos", ["foo"]
-    add_group "bars", ["bar"]
-  end
+    require 'simplecov'
+
+    SimpleCov.start do
+      add_filter "/spec"
+      add_filter "/config"
+      add_group "foos", ["foo"]
+      add_group "bars", ["bar"]
+    end
 end
 
-# See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
 RSpec.configure do |config|
   config.include Mongoid::Matchers, orm: :mongoid
   config.include ApiHelper, type: :request
