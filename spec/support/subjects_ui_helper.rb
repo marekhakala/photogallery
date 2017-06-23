@@ -26,7 +26,7 @@ module SubjectsUiHelper
                                count: ThingImage.where(image: image).count, wait: 5)
       expect(page).to have_css("div.image-existing img", count: 1, wait: 5)
 
-      wait_until { find("div.image-existing img")[:complete] == true }
+      wait_until { find("div.image-existing img")[:complete].to_s == true }
     end
 
     expected_linkables ||= get_linkables(image).size
@@ -88,5 +88,13 @@ module SubjectsUiHelper
         expect(page).to have_css(".thing-list li", count: things.count, wait: 5)
       end
     end
+  end
+
+  def visit_subjects
+    unless page.has_css?("div.subjects-page")
+      visit "#{ui_path}/#/subjects"
+    end
+
+    expect(page).to have_css("div.subjects-page")
   end
 end

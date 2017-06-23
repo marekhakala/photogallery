@@ -26,9 +26,7 @@
     vm.myPositionError = null;
     vm.changeDistance = changeDistance;
 
-    vm.$onInit = function() {
-      console.log("CurrentOriginSelectorController",$scope);
-    }
+    vm.$onInit = function() {}
     return;
 
     function lookupAddress() {
@@ -55,7 +53,6 @@
     function useCurrentLocation() {
       myLocation.getCurrentLocation().then(
         function(location) {
-          console.log("useCurrentLocation", location);
           currentOrigin.setLocation(location);
           vm.myPositionError = null;
         },

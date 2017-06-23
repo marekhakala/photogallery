@@ -14,9 +14,7 @@
         link: link };
     return directive;
 
-    function link(scope, element, attrs) {
-      console.log("ImagesAuthzDirective", scope);
-    }
+    function link(scope, element, attrs) {}
   }
 
   ImagesAuthzController.$inject = ["$scope", "spa.subjects.ImagesAuthz"];
@@ -24,7 +22,7 @@
     var vm = this;
 
     vm.authz = {};
-    vm.newItem=newItem;
+    vm.newItem = newItem;
 
     activate();
     return;
@@ -41,10 +39,8 @@
     }
 
     function authzUserItem(item, user) {
-      console.log("new Item/Authz", item, user);
-
       vm.authz.authenticated = ImagesAuthz.isAuthenticated();
-      vm.authz.canQuery      = ImagesAuthz.canQuery();
+      vm.authz.canQuery = ImagesAuthz.canQuery();
       vm.authz.canCreate = ImagesAuthz.canCreate();
 
       if (item && item.$promise) {
@@ -77,7 +73,6 @@
       vm.authz.canUpdate = ImagesAuthz.canUpdate(item);
       vm.authz.canDelete = ImagesAuthz.canDelete(item);
       vm.authz.canGetDetails = ImagesAuthz.canGetDetails(item);
-      console.log("checkAccess", item, vm.authz);
     }
 
     function canUpdateItem(item) {

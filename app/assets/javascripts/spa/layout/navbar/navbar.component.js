@@ -19,9 +19,7 @@
     var vm = this;
     vm.getLoginLabel = getLoginLabel;
 
-    vm.$onInit = function() {
-      console.log("NavbarController", $scope);
-    }
+    vm.$onInit = function() {}
     return;
 
     function getLoginLabel() {

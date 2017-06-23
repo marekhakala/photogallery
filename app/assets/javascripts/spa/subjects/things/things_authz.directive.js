@@ -15,9 +15,7 @@
 
     return directive;
 
-    function link(scope, element, attrs) {
-      console.log("ThingsAuthzDirective", scope);
-    }
+    function link(scope, element, attrs) {}
   }
 
   ThingAuthzController.$inject = ["$scope", "spa.subjects.ThingsAuthz"];
@@ -41,8 +39,6 @@
     }
 
     function authzUserItem(item, user) {
-      console.log("new Item/Authz", item, user);
-
       vm.authz.authenticated = ThingsAuthz.isAuthenticated();
       vm.authz.canQuery = ThingsAuthz.canQuery();
       vm.authz.canCreate = ThingsAuthz.canCreate();
@@ -50,7 +46,7 @@
      if (item && item.$promise) {
        vm.authz.canUpdate = false;
        vm.authz.canDelete = false;
-       vm.authz.canGetDetails  = false;
+       vm.authz.canGetDetails = false;
        vm.authz.canUpdateImage = false;
        vm.authz.canRemoveImage = false;
        item.$promise.then(function(){ checkAccess(item); });
@@ -65,7 +61,6 @@
      vm.authz.canGetDetails = ThingsAuthz.canGetDetails(item);
      vm.authz.canUpdateImage = ThingsAuthz.canUpdateImage(item);
      vm.authz.canRemoveImage = ThingsAuthz.canRemoveImage(item);
-     console.log("checkAccess", item, vm.authz);
    }
 
    function canUpdateItem(item) {

@@ -37,8 +37,6 @@
     vm.updateImageLinks = updateImageLinks;
 
     vm.$onInit = function() {
-      console.log("ThingEditorController", $scope);
-
       $scope.$watch(function() { return Authz.getAuthorizedUserId(); },
         function() {
           if ($stateParams.id) {
@@ -58,8 +56,6 @@
 
     function reload(thingId) {
       var itemId = thingId ? thingId : vm.item.id;
-      console.log("re/loading thing", itemId);
-
       vm.images = ThingImage.query({ thing_id: itemId });
       vm.item = Thing.get({ id: itemId });
       vm.thingsAuthz.newItem(vm.item);
@@ -73,7 +69,7 @@
     }
 
     function haveDirtyLinks() {
-      for (var i=0; vm.images && i<vm.images.length; i++) {
+      for (var i = 0; vm.images && i < vm.images.length; i++) {
         var ti = vm.images[i];
 
         if (ti.toRemove || ti.originalPriority != ti.priority) {
@@ -86,7 +82,6 @@
     function create() {
       vm.item.errors = null;
       vm.item.$save().then(function() {
-        console.log("thing created", vm.item);
         $state.go(".",{ id: vm.item.id });
       }, handleError);
     }
@@ -104,7 +99,6 @@
 
     function updateImageLinks(promise) {
       var promises = [];
-      console.log("updating links to images");
 
       if (promise) { promises.push(promise); }
         angular.forEach(vm.images, function(ti) {
@@ -115,9 +109,7 @@
           }
       });
 
-      console.log("waiting for promises", promises);
       $q.all(promises).then(function(response) {
-          console.log("promise.all response", response);
           $scope.thingform.$setPristine();
           reload();
         }, handleError);
@@ -125,7 +117,6 @@
 
     function remove() {
       vm.item.$remove().then(function() {
-        console.log("thing.removed", vm.item);
         clear();
       }, handleError);
     }
@@ -152,8 +143,6 @@
     var vm = this;
 
     vm.$onInit = function() {
-      console.log("ThingSelectorController",$scope);
-
       $scope.$watch(function() { return Authz.getAuthorizedUserId(); },
                     function() {
                       if (!$stateParams.id) {

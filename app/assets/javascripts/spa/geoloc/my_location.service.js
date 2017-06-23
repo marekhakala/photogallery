@@ -18,12 +18,10 @@
                      function($window, $q, geocoder) {
 
       MyLocation.prototype.isCurrentLocationSupported = function() {
-        console.log("isCurrentLocationSupported", $window.navigator.geolocation != null);
         return $window.navigator.geolocation != null;
       }
 
       MyLocation.prototype.getCurrentLocation = function() {
-        console.log("getCurrentLocation");
         var service = this;
         var deferred = $q.defer();
 
@@ -41,11 +39,9 @@
 
       MyLocation.prototype.geocodeGeoposition = function(deferred, position) {
         var pos = provider.positionOverride ? provider.positionOverride : position.coords;
-        console.log("handleMyPosition", pos, geocoder);
 
         geocoder.getLocationByPosition({ lng: pos.longitude, lat: pos.latitude }).$promise.then(
           function geocodeSuccess(location) {
-            console.log("locationResult", location);
             deferred.resolve(location);
           },
           function geocodeFailure(err) {

@@ -21,7 +21,7 @@ require_relative 'support/database_cleaners.rb'
 require_relative 'support/api_helper.rb'
 require_relative 'support/ui_helper.rb'
 
-browser = :firefox
+browser = :chrome
 Capybara.register_driver :selenium do |app|
   if browser == :chrome
     if ENV['CHROMEDRIVER_BINARY_PATH']

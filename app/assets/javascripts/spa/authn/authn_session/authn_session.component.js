@@ -23,7 +23,6 @@
     vm.getCurrentUserName = Authn.getCurrentUserName;
 
     vm.$onInit = function() {
-      console.log("AuthnSessionController", $scope);
     }
 
     vm.$postLink = function() {
@@ -32,9 +31,9 @@
     return;
 
     function login() {
-      console.log("login");
       $scope.login_form.$setPristine();
       vm.loginForm["errors"] = null;
+
       Authn.login(vm.loginForm).then(
       function() {
         vm.dropdown.removeClass("open");

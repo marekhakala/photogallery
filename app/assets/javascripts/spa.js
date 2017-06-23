@@ -42,6 +42,9 @@
 //= require spa/layout/image_loader/image_loader.component
 //= require spa/layout/image_viewer/image_viewer.component
 
+//= require spa/layout/tabs/tabs.component
+//= require spa/layout/areas/areas.component
+
 //= require spa/foos/foos.module
 //= require spa/foos/foos.service
 //= require spa/foos/foos.controller
