@@ -142,7 +142,7 @@ RSpec.feature "SubjectLayouts", type: :feature, js: true do
         end
       end
 
-      expect(page).to have_no_css("sd-areas div.areas-right")
+      expect(page).to have_no_css("sd-areas div.areas-right", wait: 3)
       expect(page).to have_css("sd-areas div.areas-left.col-sm-12")
     end
 
@@ -153,7 +153,7 @@ RSpec.feature "SubjectLayouts", type: :feature, js: true do
       expect(page).to have_no_css("sd-area[label='Details'] div.area-pane.expanded")
 
       find("sd-area[label='Details'] input[name='collapse-area']").click
-      expect(page).to have_no_css("sd-area[label='Details'] div.area-pane")
+      expect(page).to have_no_css("sd-area[label='Details'] div.area-pane", wait: 3)
       expect(page).to have_css("sd-area[label='Subjects'] div.area-pane.expanded")
     end
 
@@ -164,7 +164,7 @@ RSpec.feature "SubjectLayouts", type: :feature, js: true do
       expect(page).to have_no_css("sd-area[label='Details'] div.area-pane.expanded")
 
       find("sd-area[label='Subjects'] input[name='collapse-area']").click
-      expect(page).to have_no_css("sd-area[label='Subjects'] div.area-pane")
+      expect(page).to have_no_css("sd-area[label='Subjects'] div.area-pane", wait: 3)
       expect(page).to have_css("sd-area[label='Details'] div.area-pane.expanded")
     end
   end

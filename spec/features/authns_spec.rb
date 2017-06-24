@@ -13,6 +13,7 @@ RSpec.feature "Authns", type: :feature, js: true do
         expect(page).to have_no_css("#signup-form")
         user = User.where(email: user_props[:email]).first
         expect(user.created_at).to be > start_time
+        sleep 0.5
       end
     end
 
@@ -109,6 +110,10 @@ RSpec.feature "Authns", type: :feature, js: true do
     end
 
     context "valid user login" do
+      after(:each) do
+        sleep 0.5
+      end
+
       scenario "closes form and displays current user name" do
         expect(page).to have_css("#navbar-loginlabel", text: /#{user_props[:name]}/)
         expect(page).to have_no_css("#login-form")
@@ -185,7 +190,7 @@ RSpec.feature "Authns", type: :feature, js: true do
     scenario "can no longer access authenticated resources" do
       logout
       checkme
-      
+
       within ("div.checkme-user") do
         expect(page).to have_no_css("label", text: /#{user_props[:name]}/)
         expect(page).to have_css("label", text: /Authorized users only/, wait: 5)

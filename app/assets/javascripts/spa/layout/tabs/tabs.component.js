@@ -31,9 +31,7 @@
      vm.tabs = [];
      vm.selectTab = selectTab;
 
-     vm.$onInit = function() {
-       console.log("TabsController", $scope);
-     }
+     vm.$onInit = function() {}
      return;
 
      function selectTab(tab) {
@@ -58,7 +56,6 @@
      var vm = this;
 
      vm.$onInit = function() {
-       console.log("TabController", $scope);
        vm.tabsController.addTab(vm);
      }
      return;

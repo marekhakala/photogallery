@@ -12,7 +12,7 @@ RSpec.feature "ManageFoos", type: :feature, :js=>true do
     let(:foos) { (1..5).map{ FactoryGirl.create(:foo) }.sort_by { |v| v["name"] } }
 
     scenario "when no instances exist" do
-      visit "#{root_path}/#/"
+      visit "#{root_path}/#/foos"
 
       within(:xpath, FOO_LIST_XPATH) do
         expect(page).to have_no_css("li")
@@ -23,6 +23,7 @@ RSpec.feature "ManageFoos", type: :feature, :js=>true do
 
     scenario "when instances exist" do
       visit "#{root_path}/#/" if foos
+      visit "#{root_path}/#/foos" if foos
 
       within(:xpath, FOO_LIST_XPATH) do
         expect(page).to have_css("li:nth-child(#{foos.count})")
@@ -38,8 +39,8 @@ RSpec.feature "ManageFoos", type: :feature, :js=>true do
 
   feature "add new Foo" do
     background(:each) do
-      visit "#{root_path}/#/"
-      
+      visit "#{root_path}/#/foos"
+
       expect(page).to have_css("h3", text: "Foos")
       expect(page).to have_css("li", count: 0)
 
