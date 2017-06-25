@@ -99,6 +99,11 @@ div.areas-pane > ul.tab-label li a {
   font-size: 0.8em;
 }
 
+div.area-pane div.tab-content div.tab-pane,
+div.area-pane div.tab-content div.tab-pane div#map {
+  height: 100%;
+}
+
 sd-image-viewer div.image-items span.id {
   display: none;
 }
@@ -178,6 +183,13 @@ sd-image-viewer .glyphicon-chevron-right {
   position: absolute;
   top: 40%;
   right: 20px;
+}
+
+/* Poltergeist testing */
+@media (width: 1050px) and (height: 800px) {
+  div.area-pane div.tab-content div.tab-pane div#map {
+    min-height: 700px;
+  }
 }
 
 /* Large */

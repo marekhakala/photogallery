@@ -30,6 +30,7 @@
 
 //= require spa/geoloc/geoloc.module
 //= require spa/geoloc/geocoder.service
+//= require spa/geoloc/map.service
 //= require spa/geoloc/my_location.service
 // require spa/geoloc/jhu_location.config
 //= require spa/geoloc/current_origin/current_origin.service
@@ -64,5 +65,6 @@
 //= require spa/subjects/things/things.component
 
 //= require spa/subjects/current_subjects/current_subjects.service
+//= require spa/subjects/current_subjects/current_subjects.component
 //= require spa/subjects/current_images/current_images.component
 //= require spa/subjects/current_things/current_things.component

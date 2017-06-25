@@ -14,7 +14,8 @@ module SubjectsUiHelper
   end
 
   def get_linkables image
-    things = ThingPolicy::Scope.new(current_user, Thing.not_linked(image)).user_roles(true, false)
+    things = ThingPolicy::Scope.new(current_user,
+                                    Thing.not_linked(image)).user_roles(true, false)
     things = ThingPolicy.merge(things)
   end
 
@@ -22,14 +23,14 @@ module SubjectsUiHelper
     within("sd-image-editor .image-form") do
       expect(page).to have_css("span.image_id", text: image.id, visible: false)
       expect(page).to have_css(".image-controls")
-      expect(page).to have_css("ul.image-things li span.thing_id", visible: false,
-                               count: ThingImage.where(image: image).count, wait: 5)
+      expect(page).to have_css("ul.image-things li span.thing_id",
+                              visible: false, count: ThingImage.where(image: image).count, wait: 5)
       expect(page).to have_css("div.image-existing img", count: 1, wait: 5)
-
-      wait_until { find("div.image-existing img")[:complete].to_s == true }
+      wait_until { find("div.image-existing img")[:complete].to_s == "true" }
     end
 
     expected_linkables ||= get_linkables(image).size
+
     if expected_linkables && logged_in?
       expect(page).to have_css(".link-things select option", count: expected_linkables)
     end
@@ -47,7 +48,7 @@ module SubjectsUiHelper
     end
   end
 
-  def displayed_caption image
+  def displayed_caption(image)
     image.caption ? image.caption : "(no caption #{image.id})"
   end
 
@@ -58,7 +59,8 @@ module SubjectsUiHelper
     end
 
     within("sd-thing-editor .thing-form") do
-      expect(page).to have_css("span.thing_id", text: thing.id, visible: false, wait: 5)
+      expect(page).to have_css("span.thing_id",
+          text: thing.id, visible: false, wait: 5)
     end
   end
 
@@ -69,12 +71,11 @@ module SubjectsUiHelper
       expect(page).to have_css("span.thing_id", text: thing.id, visible: false)
       expect(page).to have_css("sd-image-viewer .image-area img", visible: false,
                               count: ThingImage.where(thing: thing).count, wait: 5)
-
       wait_until { find("sd-image-viewer .image-area img")[:complete] == true }
 
       if (page.has_css?("ul.thing-images"))
         expect(page).to have_css("ul.thing-images li span.image_id", visible: false,
-                                count: ThingImage.where(thing: thing).count, wait: 5)
+                              count: ThingImage.where(thing: thing).count, wait: 5)
       end
     end
   end
@@ -85,24 +86,23 @@ module SubjectsUiHelper
     within("sd-thing-selector", wait: 5) do
       if logged_in?
         expect(page).to have_css(".thing-list")
-        expect(page).to have_css(".thing-list li", count: things.count, wait: 5)
+        expect(page).to have_css(".thing-list li",:count: things.count, wait: 5)
       end
     end
   end
 
   def visit_subjects
-    unless page.has_css?("div.subjects-page")
-      visit "#{ui_path}/#/subjects"
-    end
-
+    visit "#{ui_path}/#/subjects" unless page.has_css?("div.subjects-page")
     expect(page).to have_css("div.subjects-page")
   end
 
   def set_origin address, distance = nil
-    click_button("change-origin") if page.has_css?("button[title='change-origin']")
-
+    if page.has_css?("button[title='change-origin']")
+      click_button("change-origin")
+    end
     fill_in("address-search", with: address)
     click_button("lookup-address")
+
     expect(page).to have_no_button("lookup-address", wait: 10)
     expect(page).to have_css("span.current-origin", text: /.+/)
 
@@ -113,16 +113,14 @@ module SubjectsUiHelper
   def populate_subjects
     @image_distances = []
     @thing_distances = []
+
     shared_images = []
     user = FactoryGirl.create(:user)
 
     (1..3).each do
       thing = FactoryGirl.create(:thing, :with_fields)
       User.find(member[:id]).add_role(Role::MEMBER, thing).save
-
-      if image = shared_images.sample
-        thing.thing_images.create(priority: 5, image: image, creator_id: user[:id])
-      end
+      thing.thing_images.create(priority: 5, image: image, creator_id: user[:id]) if image = shared_images.sample
 
       (0..1).each_with_index do |idx|
         image = FactoryGirl.create(:image)
@@ -134,8 +132,7 @@ module SubjectsUiHelper
       end
 
       thing_without_primary_image = FactoryGirl.create(:thing)
-      thing_without_primary_image.thing_images.create(priority: 5,
-          image: shared_images.sample, creator_id: user[:id])
+      thing_without_primary_image.thing_images.create(priority: 5, image: shared_images.sample, creator_id: user[:id])
     end
 
     FactoryGirl.create_list(:image, 3).each do |true_orphan_image|
@@ -157,13 +154,13 @@ module SubjectsUiHelper
   def select_image image_id, thing_id = nil
     within("sd-area[label='Subjects']") do
       find("div.tabs-pane ul li a", text: "Images").click
+
       selector = ["ul.images span.image_id", { visible: false, text: image_id }]
       expect(page).to have_css(*selector)
 
       id = !thing_id ? first(*selector) : all(*selector).select { |id|
-        id.find(:xpath, "..").has_css?("span.thing_id", { visible: false, text: thing_id }) }.first
+          id.find(:xpath, "..").has_css?("span.thing_id", { visible: false, text: thing_id }) }.first
       id.find(:xpath, "..").click
-
       expect(page).to have_css("ul.images li.selected")
     end
 
@@ -173,7 +170,7 @@ module SubjectsUiHelper
   def get_current_thing_id
     within("sd-area[label='Map']") do
       find("div.tabs-pane ul li a", text: "Things").click
-      id = find("div.tabs-pane ul.things li.selected span.thing_id", visible: false).text(:all)
+      id = find("div.tabs-pane ul.things li.selected span.thing_id", visible: false, wait: 5).text(:all)
       id.to_i if id
     end
   end
@@ -192,5 +189,9 @@ module SubjectsUiHelper
       id.to_i if id
     end
   end
- end
+
+  def subjects_map_loaded!
+    expect(page).to have_css("div#map")
+    expect(page).to have_css("div#map div.gm-style", wait: 10)
+  end
 end

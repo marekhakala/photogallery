@@ -59,3 +59,13 @@ div.thing-info .overlay {
 div.thing-info .overlay:hover {
   opacity: 1;
 }
+
+div.thing-marker-info span.id,
+div.image-marker-info span.id {
+  display: none;
+}
+
+div.thing-marker-info img,
+div.image-marker-info img {
+  width: 200px;
+}
