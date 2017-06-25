@@ -7,7 +7,7 @@ class ImageContent
   LARGE = "1200x800"
 
   CONTENT_TYPES = ["image/jpeg", "image/jpg"]
-  MAX_CONTENT_SIZE = 10*1000*1024
+  MAX_CONTENT_SIZE = 10 * 1000 * 1024 # 10 MB
 
   field :image_id, type: Integer
   field :width, type: Integer
@@ -21,31 +21,31 @@ class ImageContent
   validates_presence_of :image_id, :height, :width, :content_type, :content
   validate :validate_width_height, :validate_content_length
 
+  scope :image, -> (image) { where(image_id: image.id) if image }
+  scope :smallest, -> (min_width = nil, min_height = nil) {
+    if min_width or min_height
+      query = where({})
+      query = query.where(width: { :$gte => min_width }) if min_width
+      query = query.where(height: { :$gte => min_height }) if min_height
+      query.order(:width.asc, :height.asc).limit(1)
+    else
+      order(:width.desc, :height.desc).limit(1)
+    end
+  }
+
   def validate_width_height
-    if (!width || !height) && content
+    if (not width or not height) and content
       unless CONTENT_TYPES.include? content_type
-        errors.add(:content_type,"[#{content_type}] not supported type #{CONTENT_TYPES}")
+        errors.add(:content_type, "[#{content_type}] not supported type #{CONTENT_TYPES}")
       end
     end
   end
 
   def validate_content_length
-    if (content && content.data.size > MAX_CONTENT_SIZE)
-      errors.add(:content,"#{content.data.size} too large, greater than max #{MAX_CONTENT_SIZE}")
+    if content and content.data.size > MAX_CONTENT_SIZE
+      errors.add(:content, "#{content.data.size} too large, greater than max #{MAX_CONTENT_SIZE}")
     end
   end
-
-  scope :image, -> (image) { where(image_id: image.id) if image }
-    scope :smallest, -> (min_width = nil, min_height = nil) {
-      if min_width || min_height
-        query = where({})
-        query = query.where(width: { :$gte => min_width }) if min_width
-        query = query.where(height: { :$gte => min_height }) if min_height
-        query.order(:width.asc, :height.asc).limit(1)
-      else
-        order(:width.desc, :height.desc).limit(1)
-      end
-    }
 
   def content=(value)
     if self[:content]
@@ -53,9 +53,10 @@ class ImageContent
       self.height = nil
     end
 
-    self[:content] = self.class.to_binary(value)
+    self[:content] = self.class.to_binary value
+
     exif.tap do |xf|
-      self.width = xf.width   if xf
+      self.width = xf.width if xf
       self.height = xf.height if xf
     end
   end
@@ -64,7 +65,7 @@ class ImageContent
     "jpg" if CONTENT_TYPES.include? content_type
   end
 
-  def self.to_binary(value)
+  def self.to_binary value
     case
     when value.is_a?(IO) || value.is_a?(StringIO)
       value.rewind

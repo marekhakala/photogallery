@@ -2,11 +2,11 @@
   <form id="login-form" name="login_form" ng-submit="$ctrl.login()">
     <div class="form-group">
       <div id="login-email">
-        <label>email</label>
+        <label>Email</label>
         <input type="email" name="login_email" ng-model="$ctrl.loginForm.email" required="required" />
       </div>
       <div id="login-password">
-        <label>password</label>
+        <label>Password</label>
         <input type="password" name="login_password" ng-model="$ctrl.loginForm.password" required="required" />
       </div>
     </div>
@@ -20,7 +20,6 @@
     </div>
   </form>
 </div>
-
 <div ng-show="$ctrl.getCurrentUser()">
   <form id="logout-form" ng-submit="$ctrl.logout()">
     <span id="user_id" class="id" ng-if="$ctrl.getCurrentUser()">{{$ctrl.getCurrentUser().id}}</span>

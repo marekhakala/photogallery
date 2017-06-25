@@ -32,25 +32,31 @@ Capybara.register_driver :selenium do |app|
   else
     if ENV['FIREFOX_BINARY_PATH']
       require 'selenium/webdriver'
+      #set FIREFOX_BINARY_PATH=c:\Program Files\Mozilla Firefox\firefox.exe
       Selenium::WebDriver::Firefox::Binary.path = ENV['FIREFOX_BINARY_PATH']
     end
 
     profile = Selenium::WebDriver::Firefox::Profile.new
     profile["geo.prompt.testing"] = true
     profile["geo.prompt.testing.allow"] = true
-    Capybara::Selenium::Driver.new(app, browser: :firefox, profile: profile)
+    Capybara::Selenium::Driver.new(app, browser: :firefox, profile:  profile)
   end
 end
 
 require 'capybara/poltergeist'
+# Set the default driver
 Capybara.configure do |config|
   config.default_driver = :rack_test
+  #used when :js=>true
   config.javascript_driver = :poltergeist
 end
+#Capybara.javascript_driver = :selenium
 
 Capybara.register_driver :poltergeist do |app|
-  Capybara::Poltergeist::Driver.new(app,
-  js_errors: false, phantomjs_logger: StringIO.new)
+  Capybara::Poltergeist::Driver.new( app, js_errors: false,
+    phantomjs_logger: StringIO.new,
+#    logger: STDERR
+    )
 end
 
 if ENV["COVERAGE"] == "true"
@@ -64,10 +70,19 @@ if ENV["COVERAGE"] == "true"
     end
 end
 
+#
+# See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
 RSpec.configure do |config|
   config.include Mongoid::Matchers, orm: :mongoid
   config.include ApiHelper, type: :request
   config.include UiHelper, type: :feature
+
+  config.before(:each, js: true) do
+    #Capybara.page.driver.browser.manage.window.maximize
+    if not ENV['SELENIUM_REMOTE_HOST'] or Capybara.javascript_driver = :poltergeist
+      Capybara.page.current_window.resize_to(1050, 800)
+    end
+  end
 
   # rspec-expectations config goes here. You can use an alternate
   # assertion/expectation library such as wrong or the stdlib/minitest

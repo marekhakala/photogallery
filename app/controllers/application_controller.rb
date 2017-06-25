@@ -5,6 +5,7 @@ class ApplicationController < ActionController::API
   include Pundit
 
   before_action :configure_permitted_parameters, if: :devise_controller?
+  skip_before_action :verify_authenticity_token
 
   rescue_from ActiveRecord::RecordNotFound, with: :record_not_found
   rescue_from Mongoid::Errors::DocumentNotFound, with: :record_not_found
@@ -16,7 +17,7 @@ class ApplicationController < ActionController::API
     def full_message_error full_message, status
       payload = { errors: { full_messages:["#{full_message}"] } }
 
-      render json: payload, :status: status
+      render json: payload, status: status
     end
 
     def record_not_found exception

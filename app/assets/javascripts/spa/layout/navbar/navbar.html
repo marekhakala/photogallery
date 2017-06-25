@@ -15,9 +15,10 @@
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Go To<span class="caret"></span></a>
           <ul class="dropdown-menu">
             <li ui-sref-active="active"><a ui-sref="authn">Authentication Check</a></li>
-            <li ui-sref-active="{'active': 'images'}"><a ui-sref="images({id:null})">Images</a></li>
-            <li ui-sref-active="{'active': 'things'}"><a ui-sref="things({id:null})">Things</a></li>
+            <li ui-sref-active="{'active': 'images'}"><a ui-sref="images({id: null})">Images</a></li>
+            <li ui-sref-active="{'active': 'things'}"><a ui-sref="things({id: null})">Things</a></li>
             <li ui-sref-active="active"><a ui-sref="home">Subjects</a></li>
+            <li ui-sref-active="active"><a ui-sref="tags">Tags</a></li>
           </ul>
         </li>
       </ul>
@@ -27,7 +28,7 @@
       <ul class="nav navbar-nav navbar-right">
         <li id="login-dropdown" class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-          <span id="navbar-loginlabel">{{$ctrl.getLoginLabel()}}</span>
+          <span id="navbar-loginlabel">{{ $ctrl.getLoginLabel() }}</span>
           <span class="caret"></span></a>
 
           <ul class="dropdown-menu">

@@ -4,18 +4,20 @@ RSpec.describe "Foo API", type: :request do
   include_context "db_cleanup_each", :transaction
 
   context "caller requests list of Foos" do
-    let!(:foos) { (1..5).map {|idx| FactoryGirl.create(:foo) } }
+    let!(:foos) { (1..5).map { |idx| FactoryGirl.create(:foo) }}
 
     it "returns all instances" do
-      get foos_path, { :sample1 => "param", :sample2 => "param" }, { "Accept" => "application/json" }
+      get foos_path, { :sample1 => "param", :sample2 => "param" },
+        { "Accept" => "application/json" }
+
       expect(request.method).to eq("GET")
       expect(response).to have_http_status(:ok)
       expect(response.content_type).to eq("application/json")
       expect(response["X-Frame-Options"]).to eq("SAMEORIGIN")
 
-      payload=parsed_body
+      payload = parsed_body
       expect(payload.count).to eq(foos.count)
-      expect(payload.map{|f|f["name"]}).to eq(foos.map{|f|f[:name]})
+      expect(payload.map { |foo| foo["name"] }).to eq(foos.map { |foo| foo[:name] })
     end
   end
 
@@ -26,9 +28,8 @@ RSpec.describe "Foo API", type: :request do
     it "returns Foo when using correct ID" do
       get foo_path(foo.id)
       expect(response).to have_http_status(:ok)
-      #pp parsed_body
 
-      payload=parsed_body
+      payload = parsed_body
       expect(payload).to have_key("id")
       expect(payload).to have_key("name")
       expect(payload["id"]).to eq(foo.id)
@@ -37,14 +38,14 @@ RSpec.describe "Foo API", type: :request do
 
     it "returns not found when using incorrect ID" do
       get foo_path(bad_id)
-      #pp parsed_body
+
       expect(response).to have_http_status(:not_found)
       expect(response.content_type).to eq("application/json")
 
-      payload=parsed_body
+      payload = parsed_body
       expect(payload).to have_key("errors")
       expect(payload["errors"]).to have_key("full_messages")
-      expect(payload["errors"]["full_messages"][0]).to include("cannot","#{bad_id}")
+      expect(payload["errors"]["full_messages"][0]).to include("cannot", "#{bad_id}")
     end
   end
 
@@ -52,16 +53,15 @@ RSpec.describe "Foo API", type: :request do
     let(:foo_state) { FactoryGirl.attributes_for(:foo) }
 
     it "can create with provided name" do
-      post foos_path, foo_state.to_json, 'Content-Type' => 'application/json'
-      #pp parsed_body
+      jpost foos_path, foo_state
       expect(response).to have_http_status(:created)
       expect(response.content_type).to eq("application/json")
 
-      payload=parsed_body
+      payload = parsed_body
       expect(payload).to have_key("id")
       expect(payload).to have_key("name")
       expect(payload["name"]).to eq(foo_state[:name])
-      id=payload["id"]
+      id = payload["id"]
 
       expect(Foo.find(id).name).to eq(foo_state[:name])
     end
@@ -79,7 +79,7 @@ RSpec.describe "Foo API", type: :request do
 
       expect(Foo.find(foo.id).name).to eq(new_name)
     end
-    
+
     it "can be deleted" do
       head foo_path(foo.id)
       expect(response).to have_http_status(:ok)

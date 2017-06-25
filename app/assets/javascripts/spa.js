@@ -1,5 +1,5 @@
-//= require bootstrap
 //= require jquery2
+//= require bootstrap
 //= require angular
 //= require angular-ui-router
 //= require angular-resource
@@ -63,6 +63,9 @@
 //= require spa/subjects/things/things_authz.service
 //= require spa/subjects/things/things_authz.directive
 //= require spa/subjects/things/things.component
+
+//= require spa/subjects/tags/tags.service
+//= require spa/subjects/current_tags/current_tags.component.js
 
 //= require spa/subjects/current_subjects/current_subjects.service
 //= require spa/subjects/current_subjects/current_subjects.component

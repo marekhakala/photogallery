@@ -4,15 +4,16 @@ require_relative '../support/image_content_helper.rb'
 RSpec.describe "ImageContent", type: :model do
   include_context "db_cleanup"
   include ImageContentHelper
+
   let(:fin) { image_file }
 
   context "BSON::Binary" do
     it "demonstrates BSON::Binary" do
-      binary = BSON::Binary.new(fin.read)
+      binary = BSON::Binary.new fin.read
       expect(binary.data.size).to eq(fin.size)
 
       fout = File.open("tmp/out.jpg", "wb")
-      fout.write(binary.data)
+      fout.write binary.data
 
       expect(fout.size).to eq(fin.size)
       fout.close
@@ -20,32 +21,32 @@ RSpec.describe "ImageContent", type: :model do
 
     context "using helper" do
       it "derives BSON::Binary from file" do
-        binary = ImageContent.to_binary(fin)
+        binary = ImageContent.to_binary fin
 
         expect(binary.class).to be(BSON::Binary)
         expect(binary.data.size).to eq(fin.size)
       end
 
       it "derives BSON::Binary from StringIO" do
-        strio = StringIO.new(fin.read)
-        binary = ImageContent.to_binary(strio)
+        stringio = StringIO.new fin.read
+        binary = ImageContent.to_binary stringio
 
         expect(binary.class).to be(BSON::Binary)
         expect(binary.data.size).to eq(fin.size)
       end
 
       it "derives BSON::Binary from BSON::Binary" do
-        binary = BSON::Binary.new(fin.read)
-        binary = ImageContent.to_binary(binary)
+        binary = BSON::Binary.new fin.read
+        binary = ImageContent.to_binary binary
 
         expect(binary.class).to be(BSON::Binary)
         expect(binary.data.size).to eq(fin.size)
       end
 
       it "derives BSON::Binary from base64 encoded String" do
-        content = BSON::Binary.new(fin.read)
-        b64 = Base64.encode64(content.data)
-        binary = ImageContent.to_binary(b64)
+        content = BSON::Binary.new fin.read
+        b64 = Base64.encode64 content.data
+        binary = ImageContent.to_binary b64
 
         expect(binary.class).to be(BSON::Binary)
         expect(binary.data.size).to eq(fin.size)
@@ -55,17 +56,17 @@ RSpec.describe "ImageContent", type: :model do
 
   context "assign content" do
     it "sets content" do
-      strio = StringIO.new(fin.read)
+      stringio = StringIO.new fin.read
       ic = ImageContent.new
-      ic.content = strio
+      ic.content = stringio
 
       expect(ic.content.class).to be(BSON::Binary)
       expect(ic.content.data.size).to eq(fin.size)
     end
 
     it "mass-assigns content" do
-      strio = StringIO.new(fin.read)
-      ic = ImageContent.new(content: strio)
+      stringio = StringIO.new fin.read
+      ic = ImageContent.new(content: stringio)
 
       expect(ic.content.class).to be(BSON::Binary)
       expect(ic.content.data.size).to eq(fin.size)
@@ -90,7 +91,9 @@ RSpec.describe "ImageContent", type: :model do
       width = 666
       height = 444
 
-      ic = ImageContent.new(width: width, height: height, content_type: "image/png", content: fin)
+      ic = ImageContent.new(width: width, height: height,
+        content_type: "image/png", content: fin)
+
       expect(ic.width).to eq(width)
       expect(ic.height).to eq(height)
     end
@@ -106,30 +109,35 @@ RSpec.describe "ImageContent", type: :model do
 
     it "requires image" do
       ic.image_id = nil
+
       expect(ic.validate).to be false
       expect(ic.errors.messages).to include(:image_id)
     end
 
     it "requires content_type" do
       ic.content_type = nil
+
       expect(ic.validate).to be false
       expect(ic.errors.messages).to include(:content_type)
     end
 
     it "requires content" do
       ic.content = nil
+
       expect(ic.validate).to be false
       expect(ic.errors.messages).to include(:content)
     end
 
     it "requires width" do
       ic.width = nil
+
       expect(ic.validate).to be false
       expect(ic.errors.messages).to include(:width)
     end
 
     it "requires height" do
       ic.height = nil
+
       expect(ic.validate).to be false
       expect(ic.errors.messages).to include(:height)
     end
@@ -137,6 +145,7 @@ RSpec.describe "ImageContent", type: :model do
     it "requires supported content_type" do
       ic.content_type = "image/png"
       ic.content = ic.content
+
       expect(ic.validate).to be false
       expect(ic.errors.messages).to include(:content_type)
       expect(ic.errors.messages[:content_type]).to include(/png/)
@@ -150,7 +159,8 @@ RSpec.describe "ImageContent", type: :model do
         content += decoded_pad
       end while content.size < ImageContent::MAX_CONTENT_SIZE
 
-      ic.content = Base64.encode64(content)
+      ic.content = Base64.encode64 content
+
       expect(ic.validate).to be false
       expect(ic.errors.messages).to include(:content)
     end
@@ -168,15 +178,15 @@ RSpec.describe "ImageContent", type: :model do
 
     it "encoded input content attribute with base64" do
       props = FactoryGirl.attributes_for(:image_content)
-      data = Base64.decode64(props[:content])
-      binary = ImageContent.to_binary(props[:content])
+      data = Base64.decode64 props[:content]
+      binary = ImageContent.to_binary props[:content]
 
       expect(data.size).to eq(binary.data.size)
       expect(data).to eq(binary.data)
     end
 
     it "can create image content" do
-      image = Image.create(creator_id:1)
+      image = Image.create(creator_id: 1)
       ic = FactoryGirl.create(:image_content, image_id: image.id)
 
       expect(ic).to be_valid
@@ -186,7 +196,7 @@ RSpec.describe "ImageContent", type: :model do
     it "can create image contents from attributes" do
       image = Image.create(creator_id: 1)
       props = FactoryGirl.attributes_for(:image_content)
-      ic = ImageContent.create(props.merge(image_id: image.id))
+      ic = ImageContent.create props.merge(image_id: image.id)
 
       expect(ic).to be_valid
     end
@@ -203,7 +213,7 @@ RSpec.describe "ImageContent", type: :model do
 
         expect(props).to include(:image_content)
         expect(props[:image_content].class).to eq(Hash)
-        expect(props[:image_content]).to include(:content_type,:content)
+        expect(props[:image_content]).to include(:content_type, :content)
         expect(props[:image_content][:content_type]).to eq("image/jpg")
       end
 
@@ -221,6 +231,7 @@ RSpec.describe "ImageContent", type: :model do
 
   context "Image scaling" do
     include_context "db_scope"
+
     let(:image) { FactoryGirl.build(:image) }
     let(:image_content) { FactoryGirl.build(:image_content) }
 
@@ -236,21 +247,24 @@ RSpec.describe "ImageContent", type: :model do
     end
 
     it "creates for Image with ImageContent" do
-      creator = ImageContentCreator.new(image)
+      creator = ImageContentCreator.new image
       creator.build_contents
+
       expect(creator.save!).to eq true
     end
 
     it "creates for Image and ImageContent" do
       image.image_content = nil
-      creator = ImageContentCreator.new(image, image_content)
+      creator = ImageContentCreator.new image, image_content
       creator.build_contents
+
       expect(creator.save!).to eq true
     end
   end
 
   context "content for image" do
     include_context "db_scope"
+
     let(:image) { FactoryGirl.create(:image) }
 
     it "find for image" do
@@ -279,8 +293,8 @@ RSpec.describe "ImageContent", type: :model do
     it "find largest" do
       ic = ImageContent.image(image).smallest
       expect(ic.to_a.count).to eq(1)
-      ic = ic.first
 
+      ic = ic.first
       widest = ImageContent.image(image).order(:width.desc).limit(1).first
       expect(ic.id).to eq(widest.id)
 

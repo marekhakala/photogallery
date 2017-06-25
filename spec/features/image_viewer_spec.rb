@@ -13,10 +13,15 @@ RSpec.feature "ImageViewer", type: :feature, js: true do
 
   before(:each) do
     unless Thing.exists?
-      t = FactoryGirl.create(:thing, :with_roles, :with_image, originator_id: originator[:id], image_count: 3)
-      t.thing_images.each_with_index { |ti, idx| ti.priority = idx; ti.save }
+      t = FactoryGirl.create(:thing, :with_roles, :with_image,
+                              originator_id: originator[:id], image_count: 3)
+
+      t.thing_images.each_with_index do |ti, idx|
+        ti.priority = idx
+        ti.save
+      end
     else
-      apply_organizer(originator, Thing.first)
+      apply_organizer originator, Thing.first
     end
 
     visit_thing thing
@@ -47,6 +52,7 @@ RSpec.feature "ImageViewer", type: :feature, js: true do
     it "displays image caption on click" do
       within("sd-image-viewer .image-items") do
         find("span.caption", visible: false).click
+
         expect(page).to have_css("span.caption", text: image.caption)
       end
     end
@@ -57,8 +63,8 @@ RSpec.feature "ImageViewer", type: :feature, js: true do
       end
 
       using_wait_time 15 do
-        expect(page).to have_no_css("h3",text: "Things")
-        expect(page).to have_css("h3",text: "Images")
+        expect(page).to have_no_css("h3", text: "Things")
+        expect(page).to have_css("h3", text: "Images")
       end
     end
   end
@@ -68,10 +74,11 @@ RSpec.feature "ImageViewer", type: :feature, js: true do
       within("sd-image-viewer") do
         within(".image-items") do
           find("span.caption", visible: false).click
+          
           expect(page).to have_css("span.caption", text: images[0].image.caption)
         end
 
-        [1,2,0].each do |idx|
+        [1, 2, 0].each do |idx|
           find("span.glyphicon-chevron-right", visible: false).click
 
           within(".image-items") do
@@ -89,12 +96,12 @@ RSpec.feature "ImageViewer", type: :feature, js: true do
       within("sd-image-viewer") do
         within(".image-items") do
           find("span.caption", visible: false).click
-
           expect(page).to have_css("span.caption", text: images[0].image.caption)
         end
 
-        [2,1,0].each do |idx|
+        [2, 1, 0].each do |idx|
           find("span.glyphicon-chevron-left", visible: false).click
+
           within(".image-items") do
             find("span.caption", visible: false).click
 
@@ -112,6 +119,7 @@ RSpec.feature "ImageViewer", type: :feature, js: true do
       within("sd-image-viewer .image-items") do
         width_query = page.first("img[src*='width=']") != nil
         height_query = page.first("img[src*='height=']") != nil
+
         expect(width_query || height_query).to be true
       end
     end

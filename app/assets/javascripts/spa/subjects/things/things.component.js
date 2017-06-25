@@ -6,14 +6,12 @@
       templateUrl: thingEditorTemplateUrl,
       controller: ThingEditorController,
       bindings: { authz: "<" },
-      require: {
-        thingsAuthz: "^sdThingsAuthz"
-      }
+      require: { thingsAuthz: "^sdThingsAuthz" }
     }).component("sdThingSelector", {
       templateUrl: thingSelectorTemplateUrl,
       controller: ThingSelectorController,
       bindings: { authz: "<" }
-    });
+  });
 
   thingEditorTemplateUrl.$inject = ["spa.config.APP_CONFIG"];
   function thingEditorTemplateUrl(APP_CONFIG) {
@@ -26,9 +24,11 @@
   }
 
   ThingEditorController.$inject = [ "$scope", "$q", "$state", "$stateParams",
-                                    "spa.authz.Authz", "spa.subjects.Thing", "spa.subjects.ThingImage" ];
-  function ThingEditorController($scope, $q, $state, $stateParams, Authz, Thing, ThingImage) {
+    "spa.authz.Authz", "spa.subjects.Thing", "spa.subjects.ThingImage" ];
+  function ThingEditorController($scope, $q, $state, $stateParams,
+                                  Authz, Thing, ThingImage) {
     var vm = this;
+
     vm.create = create;
     vm.clear = clear;
     vm.update = update;
@@ -56,16 +56,18 @@
 
     function reload(thingId) {
       var itemId = thingId ? thingId : vm.item.id;
+
       vm.images = ThingImage.query({ thing_id: itemId });
       vm.item = Thing.get({ id: itemId });
       vm.thingsAuthz.newItem(vm.item);
+
       vm.images.$promise.then(function() {
         angular.forEach(vm.images, function(ti) {
           ti.originalPriority = ti.priority;
         });
       });
 
-      $q.all([vm.item.$promise,vm.images.$promise]).catch(handleError);
+      $q.all([vm.item.$promise, vm.images.$promise]).catch(handleError);
     }
 
     function haveDirtyLinks() {
@@ -81,9 +83,7 @@
 
     function create() {
       vm.item.errors = null;
-      vm.item.$save().then(function() {
-        $state.go(".",{ id: vm.item.id });
-      }, handleError);
+      vm.item.$save().then(function() { $state.go(".", { id: vm.item.id }); }, handleError);
     }
 
     function clear() {
@@ -101,18 +101,19 @@
       var promises = [];
 
       if (promise) { promises.push(promise); }
-        angular.forEach(vm.images, function(ti) {
-          if (ti.toRemove) {
-            promises.push(ti.$remove());
-          } else if (ti.originalPriority != ti.priority) {
-            promises.push(ti.$update());
-          }
+
+      angular.forEach(vm.images, function(ti) {
+        if (ti.toRemove) {
+          promises.push(ti.$remove());
+        } else if (ti.originalPriority != ti.priority) {
+          promises.push(ti.$update());
+        }
       });
 
       $q.all(promises).then(function(response) {
-          $scope.thingform.$setPristine();
-          reload();
-        }, handleError);
+        $scope.thingform.$setPristine();
+        reload();
+      }, handleError);
     }
 
     function remove() {
@@ -123,10 +124,7 @@
 
     function handleError(response) {
       console.log("error", response);
-
-      if (response.data) {
-        vm.item["errors"] = response.data.errors;
-      }
+      if (response.data) { vm.item["errors"] = response.data.errors; }
 
       if (!vm.item.errors) {
         vm.item["errors"] = {}
@@ -144,11 +142,11 @@
 
     vm.$onInit = function() {
       $scope.$watch(function() { return Authz.getAuthorizedUserId(); },
-                    function() {
-                      if (!$stateParams.id) {
-                        vm.items = Thing.query();
-                      }
-                    });
+        function() {
+          if (!$stateParams.id) {
+            vm.items = Thing.query();
+          }
+      });
     }
     return;
   }

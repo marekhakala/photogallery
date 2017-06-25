@@ -30,8 +30,7 @@ module UiHelper
   end
 
   def logged_in? account = nil
-    account ?
-      page.has_css?("#navbar-loginlabel", text: /#{account[:name]}/) :
+    account ? page.has_css?("#navbar-loginlabel", text: /#{account[:name]}/) :
       page.has_css?("#user_id", text: /.+/, visible: false)
   end
 
@@ -57,6 +56,7 @@ module UiHelper
 
     expect(page).to have_css("#logout-form", visible: false)
     expect(page).to have_css("#navbar-loginlabel", text: /#{credentials[:name]}/)
+
     return credentials
   end
 
@@ -64,6 +64,7 @@ module UiHelper
     if logged_in?
       find("#navbar-loginlabel").click unless page.has_button?("Logout")
       find_button("Logout", wait: 5).click
+
       expect(page).to have_no_css("#user_id", visible: false, wait: 5)
     end
   end
@@ -73,6 +74,7 @@ module UiHelper
 
     if logged_in?
       name = page.find("#navbar-loginlabel", text: /.+/).text
+
       User.where(name: name).each do |u|
         if page.has_css?("#user_id", text: u.id, visible: false, wait: 5)
           user = u
@@ -104,19 +106,16 @@ module UiHelper
   def apply_role account, role, object
     user = User.find(account.symbolize_keys[:id])
     arr = object.kind_of?(Array) ? object : [object]
-
-    arr.each do |m|
-      user.add_role(role, m).save
-    end
+    arr.each { |m| user.add_role(role, m).save }
 
     return account
   end
 
   def apply_organizer account, object
-    apply_role(account,Role::ORGANIZER, object)
+    apply_role account, Role::ORGANIZER, object
   end
 
   def apply_member account, object
-    apply_role(account, Role::MEMBER, object)
+    apply_role account, Role::MEMBER, object
   end
 end

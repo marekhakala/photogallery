@@ -2,6 +2,7 @@ require 'rails_helper'
 
 RSpec.describe "WhoAmI", type: :request do
   include_context "db_cleanup_each"
+
   let(:account) { signup FactoryGirl.attributes_for(:user) }
 
   def whoami user
@@ -19,13 +20,14 @@ RSpec.describe "WhoAmI", type: :request do
       expect(payload).to_not include("id")
       expect(payload).to_not include("email")
       expect(payload).to_not include("user_roles")
+
       []
     end
   end
 
   shared_examples "no roles" do
     it "" do
-      user_roles = whoami(user)
+      user_roles = whoami user
       expect(user_roles).to be_empty
     end
   end
@@ -33,6 +35,7 @@ RSpec.describe "WhoAmI", type: :request do
   context "anonymous" do
     let(:user) { nil }
     before(:each) { logout nil }
+
     it_should_behave_like "no roles"
   end
 
@@ -53,7 +56,8 @@ RSpec.describe "WhoAmI", type: :request do
 
     it "has originator role" do
       apply_member(user, FactoryGirl.create(:thing))
-      user_roles = whoami(user)
+      user_roles = whoami user
+
       expect(user_roles.size).to eq(1)
       expect(user_roles[0]).to include("role_name" => Role::ORIGINATOR,
                                        "resource" => Thing.model_name)
@@ -64,8 +68,9 @@ RSpec.describe "WhoAmI", type: :request do
     let(:user) { apply_admin(login(account)) }
 
     it "has admin role" do
-      user_roles = whoami(user)
+      user_roles = whoami user
       expect(user_roles.size).to eq(1)
+
       expect(user_roles[0]).to include("role_name" => Role::ADMIN)
       expect(user_roles[0]).to_not include("resource")
     end
@@ -75,10 +80,10 @@ RSpec.describe "WhoAmI", type: :request do
     let(:user) { apply_admin(apply_originator(login(account), Thing)) }
 
     it "has originator and admin role" do
-      user_roles = whoami(user)
+      user_roles = whoami user
       expect(user_roles.size).to eq(2)
-      admin_role = nil
       originator_role = nil
+      admin_role = nil
 
       user_roles.each do |role|
         case role["role_name"]

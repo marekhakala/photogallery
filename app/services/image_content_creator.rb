@@ -1,24 +1,26 @@
 class ImageContentCreator
   attr_accessor :image, :original, :contents
 
-  def initialize(image, image_content=nil)
+  def initialize(image, image_content = nil)
     @image = image
+
     @original = image_content || @image.image_content
     @original.image_id = @image.id
     @original.original = true
+
     @contents = []
     @contents << @original
   end
 
   def build_contents sizes = nil
     sizes ||= [ ImageContent::THUMBNAIL, ImageContent::SMALL,
-                ImageContent::MEDIUM, ImageContent::LARGE ]
+      ImageContent::MEDIUM, ImageContent::LARGE ]
     @contents |= sizes.map { |size| build_size("#{size}") }
     self
   end
 
   def build_size size
-    mm_image = MiniMagick::Image.read(@original.content.data)
+    mm_image = MiniMagick::Image.read @original.content.data
     mm_image.format "jpg"
     mm_image.resize size+"^"
 
@@ -34,7 +36,7 @@ class ImageContentCreator
   end
 
   def self.annotate text, content
-    image = MiniMagick::Image.read(content)
+    image = MiniMagick::Image.read content
 
     image.combine_options do |c|
       c.pointsize 400
@@ -51,7 +53,7 @@ class ImageContentCreator
   def save!
     @contents.each do |content|
       next if content.persisted?
-      content.save!()
+      content.save!
     end
 
     return true

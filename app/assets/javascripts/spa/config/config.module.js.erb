@@ -1,8 +1,7 @@
 (function() {
   "use strict";
 
-  angular
-    .module("spa.config", [])
+  angular.module("spa.config", [])
     .constant("spa.config.APP_CONFIG", {
       server_url: "<%= ENV['RAILS_API_URL'] %>",
       default_position: { "lng": -76.61183685064316, "lat": 39.28583496489344 },
@@ -11,6 +10,7 @@
       authn_page_html: "<%= asset_path('spa/pages/authn_page.html') %>",
       images_page_html: "<%= asset_path('spa/pages/images_page.html') %>",
       things_page_html: "<%= asset_path('spa/pages/things_page.html') %>",
+      tags_page_html: "<%= asset_path('spa/pages/tags_page.html') %>",
       subjects_page_html: "<%= asset_path('spa/pages/subjects_page.html') %>",
 
       navbar_html: "<%= asset_path('spa/layout/navbar/navbar.html') %>",
@@ -26,10 +26,11 @@
       authn_signup_html: "<%= asset_path('spa/authn/signup/signup.html') %>",
       foos_html: "<%= asset_path('spa/foos/foos.html') %>",
       image_selector_html: "<%= asset_path('spa/subjects/images/image_selector.html') %>",
-      image_editor_html: "<%= asset_path('spa/subjects/images/image_editor.html') %>"
+      image_editor_html: "<%= asset_path('spa/subjects/images/image_editor.html') %>",
       thing_editor_html: "<%= asset_path('spa/subjects/things/thing_editor.html') %>",
       thing_selector_html: "<%= asset_path('spa/subjects/things/thing_selector.html') %>",
 
+      current_tag_html: "<%= asset_path('spa/subjects/current_tags/current_tags.html')%>",
       current_images_html: "<%= asset_path('spa/subjects/current_images/current_images.html') %>",
       current_image_viewer_html: "<%= asset_path('spa/subjects/current_images/current_image_viewer.html') %>",
       current_things_html: "<%= asset_path('spa/subjects/current_things/current_things.html') %>",

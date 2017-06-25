@@ -22,7 +22,7 @@
         restrict: "A",
         scope: false,
         require: { areas: "^sdAreas" } }
-    }]);
+  }]);
 
   areasTemplateUrl.$inject = ["spa.config.APP_CONFIG"];
   function areasTemplateUrl(APP_CONFIG) {

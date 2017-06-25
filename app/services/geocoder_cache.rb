@@ -6,7 +6,7 @@ class GeocoderCache
   def geocode address
     cache = CachedLocation.by_address(address).first
 
-    if !cache
+    unless cache
       geoloc = @geocoder.geocode address
 
       if geoloc
@@ -21,7 +21,7 @@ class GeocoderCache
   def reverse_geocode point
     cache = CachedLocation.by_position(point).first
 
-    if !cache
+    unless cache
       geoloc = @geocoder.reverse_geocode point
 
       if geoloc

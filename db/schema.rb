@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170613195249) do
+ActiveRecord::Schema.define(version: 20170625211307) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -33,6 +33,25 @@ ActiveRecord::Schema.define(version: 20170613195249) do
 
   add_index "images", ["creator_id", "lng", "lat"], name: "index_images_on_creator_id_and_lng_and_lat", using: :btree
 
+  create_table "roles", force: :cascade do |t|
+    t.integer  "user_id",    null: false
+    t.string   "role_name",  null: false
+    t.string   "mname"
+    t.integer  "mid"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_index "roles", ["mid"], name: "index_roles_on_mid", using: :btree
+  add_index "roles", ["mname"], name: "index_roles_on_mname", using: :btree
+  add_index "roles", ["user_id"], name: "index_roles_on_user_id", using: :btree
+
+  create_table "tags", force: :cascade do |t|
+    t.string   "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "thing_images", force: :cascade do |t|
     t.integer  "image_id",               null: false
     t.integer  "thing_id",               null: false
@@ -45,6 +64,16 @@ ActiveRecord::Schema.define(version: 20170613195249) do
   add_index "thing_images", ["image_id", "thing_id"], name: "index_thing_images_on_image_id_and_thing_id", unique: true, using: :btree
   add_index "thing_images", ["image_id"], name: "index_thing_images_on_image_id", using: :btree
   add_index "thing_images", ["thing_id"], name: "index_thing_images_on_thing_id", using: :btree
+
+  create_table "thing_tags", force: :cascade do |t|
+    t.integer  "thing_id"
+    t.integer  "tag_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_index "thing_tags", ["tag_id"], name: "index_thing_tags_on_tag_id", using: :btree
+  add_index "thing_tags", ["thing_id"], name: "index_thing_tags_on_thing_id", using: :btree
 
   create_table "things", force: :cascade do |t|
     t.string   "name",        null: false
@@ -85,6 +114,9 @@ ActiveRecord::Schema.define(version: 20170613195249) do
   add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
   add_index "users", ["uid", "provider"], name: "index_users_on_uid_and_provider", unique: true, using: :btree
 
+  add_foreign_key "roles", "users"
   add_foreign_key "thing_images", "images"
   add_foreign_key "thing_images", "things"
+  add_foreign_key "thing_tags", "tags"
+  add_foreign_key "thing_tags", "things"
 end

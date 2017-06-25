@@ -2,16 +2,18 @@ require 'rails_helper'
 
 RSpec.describe "Authentication Api", type: :request do
   include_context "db_cleanup_each", :transaction
+
   let(:user_props) { FactoryGirl.attributes_for(:user) }
 
   context "sign-up" do
     context "valid registration" do
       it "successfully creates account" do
         signup user_props
-
         payload = parsed_body
+
         expect(payload).to include("status" => "success")
         expect(payload).to include("data")
+
         expect(payload["data"]).to include("id")
         expect(payload["data"]).to include("provider" => "email")
         expect(payload["data"]).to include("uid" => user_props[:email])
@@ -25,12 +27,14 @@ RSpec.describe "Authentication Api", type: :request do
       context "missing information" do
         it "reports error with messages" do
           signup user_props.except(:email), :unprocessable_entity
-
           payload = parsed_body
+
           expect(payload).to include("status" => "error")
           expect(payload).to include("data")
+
           expect(payload["data"]).to include("email" => nil)
           expect(payload).to include("errors")
+
           expect(payload["errors"]).to include("email")
           expect(payload["errors"]).to include("full_messages")
           expect(payload["errors"]["full_messages"]).to include(/Email/i)
@@ -45,6 +49,7 @@ RSpec.describe "Authentication Api", type: :request do
           payload = parsed_body
           expect(payload).to include("status" => "error")
           expect(payload).to include("errors")
+
           expect(payload["errors"]).to include("email")
           expect(payload["errors"]).to include("full_messages")
           expect(payload["errors"]["full_messages"]).to include(/Email/i)
@@ -56,14 +61,16 @@ RSpec.describe "Authentication Api", type: :request do
   context "anonymous user" do
     it "accesses unprotected" do
       get authn_whoami_path
+
       expect(response).to have_http_status(:ok)
       expect(parsed_body).to eq({})
     end
 
     it "fails to access protected resource" do
       get authn_checkme_path
+
       expect(response).to have_http_status(:unauthorized)
-      expect(parsed_body).to include("errors" => ["Authorized users only."])
+      expect(parsed_body).to include("errors" => ["You need to sign in or sign up before continuing."])
     end
   end
 
@@ -90,8 +97,8 @@ RSpec.describe "Authentication Api", type: :request do
       it "grants access to resource" do
         jget authn_checkme_path
         expect(response).to have_http_status(:ok)
-
         payload = parsed_body
+
         expect(payload).to include("id" => account[:id])
         expect(payload).to include("uid" => account[:uid])
       end
@@ -106,6 +113,7 @@ RSpec.describe "Authentication Api", type: :request do
       it "logout" do
         logout :ok
         expect(access_tokens?).to be false
+
         jget authn_checkme_path
         expect(response).to have_http_status(:unauthorized)
       end

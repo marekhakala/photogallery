@@ -6,14 +6,12 @@
 
   ThingsAuthzDirective.$inject = [];
   function ThingsAuthzDirective() {
-    var directive = {
+    return {
         bindToController: true,
         controller: ThingAuthzController,
         controllerAs: "vm",
         restrict: "A",
         link: link };
-
-    return directive;
 
     function link(scope, element, attrs) {}
   }

@@ -7,6 +7,7 @@
 
   function FoosController(Foo) {
     var vm = this;
+
     vm.foos;
     vm.foo;
     vm.edit = edit;
@@ -36,34 +37,29 @@
     }
 
     function create() {
-      //console.log("creating foo", vm.foo);
       vm.foo.$save().then(function(response) {
-        //console.log(response);
         vm.foos.push(vm.foo);
         newFoo();
+
       }).catch(handleError);
     }
 
     function update() {
-      //console.log("update", vm.foo);
-      vm.foo.$update().then(function(response) {
-        //console.log(response);
-      }).catch(handleError)
+      vm.foo.$update()
+        .then(function(response) {}).catch(handleError)
     }
 
     function remove() {
-      //console.log("remove", vm.foo);
-      vm.foo.$delete().then(function(response){
-        //console.log(response);
+      vm.foo.$delete().then(function(response) {
         removeElement(vm.foos, vm.foo);
         newFoo();
       }).catch(handleError)
     }
 
     function removeElement(elements, element) {
-      for (var i=0; i < elements.length; i++) {
+      for (var i = 0; i < elements.length; i++) {
         if (elements[i].id == element.id) {
-          elements.splice(i,1);
+          elements.splice(i, 1);
           break;
         }
       }

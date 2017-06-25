@@ -4,7 +4,7 @@
   angular.module("spa.layout")
     .factory("spa.layout.ImageQuerySize", ImageQuerySizeFactory);
 
-  ImageQuerySizeFactory.$inject = ["$window","$httpParamSerializer"];
+  ImageQuerySizeFactory.$inject = ["$window", "$httpParamSerializer"];
   function ImageQuerySizeFactory($window, $httpParamSerializer) {
     function ImageQuerySize(element, minWidth) {
       this.element = element;
@@ -44,7 +44,7 @@
       }
 
       if (this.height) {
-        params.height=this.height;
+        params.height = this.height;
       }
 
       return Object.keys(params).length == 0 ? "" : "?" + $httpParamSerializer(params);
@@ -74,6 +74,7 @@
       } else if (height <= 533) {
         queryHeight = 533
       }
+
       return queryHeight;
     }
 

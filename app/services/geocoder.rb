@@ -10,7 +10,7 @@ class Geocoder
   end
 
   def location geoloc
-    if geoloc && geoloc.lng && geoloc.lat
+    if geoloc and geoloc.lng and geoloc.lat
       position = Point.new(geoloc.lng, geoloc.lat)
       address = PostalAddress.new(geoloc.street_address, geoloc.city,
                       geoloc.state_code, geoloc.zip, geoloc.country_code)

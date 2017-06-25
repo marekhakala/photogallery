@@ -7,6 +7,7 @@
   CurrentOrigin.$inject = ["$rootScope"];
   function CurrentOrigin($rootScope) {
     var service = this;
+
     this.version = 0;
     this.location = null;
     this.distance = 0;

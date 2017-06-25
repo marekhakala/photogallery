@@ -1,7 +1,7 @@
 class Point
   attr_accessor :lng, :lat
 
-  def initialize(lng, lat)
+  def initialize lng, lat
     @lng = lng
     @lat = lat
   end
@@ -14,7 +14,7 @@ class Point
     !rhs ? false : rnd(lng) == rnd(rhs.lng) && rnd(lat) == rnd(rhs.lat)
   end
 
-  def rnd(value)
+  def rnd value
     !value ? nil : value.round(2)
   end
 

@@ -2,6 +2,7 @@ require 'rails_helper'
 
 RSpec.describe "ThingImages", type: :request do
   include_context "db_cleanup_each"
+
   let(:originator) { apply_originator(signup(FactoryGirl.attributes_for(:user)), Thing) }
 
   describe "manage thing/image relationships" do
@@ -19,7 +20,7 @@ RSpec.describe "ThingImages", type: :request do
         jget thing_thing_images_path(thing["id"])
         expect(response).to have_http_status(:ok)
 
-        payload=parsed_body
+        payload = parsed_body
         expect(payload.size).to eq(1)
         expect(payload[0]).to include("image_id" => image["id"])
         expect(payload[0]).to include("image_caption" => image["caption"])
@@ -31,7 +32,7 @@ RSpec.describe "ThingImages", type: :request do
 
         payload = parsed_body
         expect(payload).to include("errors")
-        expect(payload["errors"]["full_messages"]).to include(/param/,/missing/)
+        expect(payload["errors"]["full_messages"]).to include(/param/, /missing/)
       end
     end
   end
@@ -42,6 +43,7 @@ RSpec.describe "ThingImages", type: :request do
 
       expect(response).to have_http_status(:ok)
       expect(parsed_body.size).to eq(linked_image_ids.count)
+
       expect(parsed_body[0]).to include("image_caption")
       expect(parsed_body[0]).to_not include("thing_name")
     end
@@ -51,6 +53,7 @@ RSpec.describe "ThingImages", type: :request do
 
       expect(response).to have_http_status(:ok)
       expect(parsed_body.size).to eq(1)
+
       expect(parsed_body[0]).to_not include("image_caption")
       expect(parsed_body[0]).to include("thing_name" => linked_thing["name"])
     end
@@ -59,12 +62,13 @@ RSpec.describe "ThingImages", type: :request do
   shared_examples "get linkables" do |count, user_roles = []|
     it "return linkable things" do
       jget image_linkable_things_path(linked_image_ids[0])
+
       expect(response).to have_http_status(:ok)
       expect(parsed_body.size).to eq(count)
 
-      if (count > 0)
+      if count > 0
         parsed_body.each do |thing|
-          expect(thing["id"]).to be_in(unlinked_things.map{ |t| t["id"] })
+          expect(thing["id"]).to be_in(unlinked_thing_ids)
           expect(thing).to include("description")
           expect(thing).to include("notes")
           expect(thing).to include("user_roles")
@@ -80,31 +84,35 @@ RSpec.describe "ThingImages", type: :request do
       expect(response).to have_http_status(:no_content)
 
       jget thing_thing_images_path(linked_thing_id)
-      expect(parsed_body.size).to eq(linked_image_ids.count+1)
+      expect(parsed_body.size).to eq(linked_image_ids.count + 1)
     end
 
     it "link from Image to Thing" do
-      jpost image_thing_images_path(thing_image_props[:image_id]), thing_image_props.merge(thing_id: linked_thing_id)
+      jpost image_thing_images_path(thing_image_props[:image_id]),
+                                    thing_image_props.merge(thing_id: linked_thing_id)
       expect(response).to have_http_status(:no_content)
 
       jget thing_thing_images_path(linked_thing_id)
-      expect(parsed_body.size).to eq(linked_image_ids.count+1)
+      expect(parsed_body.size).to eq(linked_image_ids.count + 1)
     end
 
     it "bad request when link to unknown Image" do
-      jpost thing_thing_images_path(linked_thing_id), thing_image_props.merge(image_id: 99999)
+      jpost thing_thing_images_path(linked_thing_id),
+                                    thing_image_props.merge(image_id: 99999)
       expect(response).to have_http_status(:bad_request)
     end
 
     it "bad request when link to unknown Thing" do
-      jpost image_thing_images_path(thing_image_props[:image_id]), thing_image_props.merge(thing_id: 99999)
+      jpost image_thing_images_path(thing_image_props[:image_id]),
+                                    thing_image_props.merge(thing_id: 99999)
       expect(response).to have_http_status(:bad_request)
     end
   end
 
   shared_examples "can update link" do
     it do
-      jput thing_thing_image_path(thing_image["thing_id"], thing_image["id"]), thing_image.merge("priority" => 0)
+      jput thing_thing_image_path(thing_image["thing_id"],
+                                  thing_image["id"]), thing_image.merge("priority" => 0)
       expect(response).to have_http_status(:no_content)
     end
   end
@@ -125,7 +133,8 @@ RSpec.describe "ThingImages", type: :request do
 
   shared_examples "cannot update link" do |status|
     it do
-      jput thing_thing_image_path(thing_image["thing_id"], thing_image["id"]), thing_image.merge("priority" => 0)
+      jput thing_thing_image_path(thing_image["thing_id"],
+                                  thing_image["id"]), thing_image.merge("priority" => 0)
       expect(response).to have_http_status(status)
     end
   end
@@ -141,19 +150,19 @@ RSpec.describe "ThingImages", type: :request do
     let(:account) { signup FactoryGirl.attributes_for(:user) }
     let(:thing_resources) { 3.times.map { create_resource(things_path, :thing, :created) } }
     let(:image_resources) { 4.times.map { create_resource(images_path, :image, :created) } }
-    let(:things) { thing_resources.map {|t| Thing.find(t["id"]) } }
+    let(:things) { thing_resources.map { |t| Thing.find(t["id"]) } }
+
     let(:linked_thing) { things[0] }
     let(:linked_thing_id) { linked_thing.id }
-    let(:linked_image_ids) { (0..2).map {|idx| image_resources[idx]["id"] } }
-    let(:unlinked_thing_ids) { (1..2).map {|idx| thing_resources[idx]["id"] } }
+    let(:linked_image_ids) { (0..2).map { |idx| image_resources[idx]["id"] } }
+    let(:unlinked_thing_ids) { (1..2).map { |idx| thing_resources[idx]["id"] } }
     let(:linked_image_id) { image_resources[0]["id"] }
     let(:orphan_image_id) { image_resources[3]["id"] }
+
     let(:thing_image_props) { { image_id: orphan_image_id } }
-    let(:thing_image) {
-      jget thing_thing_images_path(linked_thing_id)
+    let(:thing_image) { jget thing_thing_images_path(linked_thing_id)
       expect(response).to have_http_status(:ok)
-      parsed_body[0]
-    }
+      parsed_body[0] }
 
     before(:each) do
       login originator
@@ -168,6 +177,7 @@ RSpec.describe "ThingImages", type: :request do
 
     context "user is anonymous" do
       before(:each) { logout }
+
       it_should_behave_like "can get links"
       it_should_behave_like "get linkables", 0
       it_should_behave_like "cannot create link", :unauthorized
@@ -177,8 +187,8 @@ RSpec.describe "ThingImages", type: :request do
 
     context "user is authenticated" do
       before(:each) { login account }
-      it_should_behave_like "can get links"
 
+      it_should_behave_like "can get links"
       it_should_behave_like "get linkables", 0
       it_should_behave_like "cannot create link", :forbidden
       it_should_behave_like "cannot update link", :forbidden
@@ -186,9 +196,7 @@ RSpec.describe "ThingImages", type: :request do
     end
 
     context "user is member" do
-      before(:each) do
-        login apply_member(account, things)
-      end
+      before(:each) { login apply_member(account, things) }
 
       it_should_behave_like "can get links"
       it_should_behave_like "get linkables", 2, [Role::MEMBER]

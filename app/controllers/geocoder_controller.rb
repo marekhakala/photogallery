@@ -3,14 +3,15 @@ class GeocoderController < ApplicationController
 
   def addresses
     address = address_params[:address]
-    geoloc, cache = @geocoder.geocode(address)
+    geoloc, cache = @geocoder.geocode address
     geocode_response geoloc, cache
   end
 
   def positions
     lng = position_params[:lng].to_f
     lat = position_params[:lat].to_f
-    geoloc, cache = @geocoder.reverse_geocode(Point.new(lng, lat))
+
+    geoloc, cache = @geocoder.reverse_geocode Point.new lng, lat
     geocode_response geoloc, cache
   end
 
@@ -24,14 +25,12 @@ class GeocoderController < ApplicationController
     end
 
     def position_params
-      params.tap do |p|
-        p.require(:lng)
-        p.require(:lat)
-      end
+      params.tap { |p| p.require(:lng)
+        p.require(:lat) }
     end
 
     def geocode_response geoloc, cache
-      if !geoloc
+      if not geoloc
         full_message_error "failed to geocode position", :internal_server_error
       else
         expires_in 1.day, public: true

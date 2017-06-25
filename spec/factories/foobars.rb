@@ -8,7 +8,7 @@ FactoryGirl.define do
   end
 
   factory :foo_names, class: 'Foo' do
-    sequence(:name) {|n| ["larry", "moe", "curly"][n%3]  }
+    sequence(:name) { |n| ["larry", "moe", "curly"][n % 3]  }
   end
 
   factory :foo_transient, class: 'Foo' do

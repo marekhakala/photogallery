@@ -2,6 +2,7 @@ require 'rails_helper'
 
 RSpec.describe "Things", type: :request do
   include_context "db_cleanup_each"
+
   let(:originator) { apply_originator(signup(FactoryGirl.attributes_for(:user)), Thing) }
 
   context "quick API check" do
@@ -16,6 +17,7 @@ RSpec.describe "Things", type: :request do
   shared_examples "cannot create" do |status|
     it "fails to create with #{status}" do
       jpost things_path, thing_props
+
       expect(response).to have_http_status(status)
       expect(parsed_body).to include("errors")
     end
@@ -24,6 +26,7 @@ RSpec.describe "Things", type: :request do
   shared_examples "cannot update" do |status|
     it "fails to update with #{status}" do
       jput thing_path(thing_id), thing_props
+
       expect(response).to have_http_status(status)
       expect(parsed_body).to include("errors")
     end
@@ -32,6 +35,7 @@ RSpec.describe "Things", type: :request do
   shared_examples "cannot delete" do |status|
     it "fails to delete with #{status}" do
       jdelete thing_path(thing_id)
+
       expect(response).to have_http_status(status)
       expect(parsed_body).to include("errors")
     end
@@ -64,7 +68,7 @@ RSpec.describe "Things", type: :request do
     end
 
     it "reports update error for invalid data" do
-      jput thing_path(thing_id), thing_props.merge(:name=>nil)
+      jput thing_path(thing_id), thing_props.merge(name: nil)
       expect(response).to have_http_status(:bad_request)
     end
   end
@@ -79,10 +83,9 @@ RSpec.describe "Things", type: :request do
   shared_examples "field(s) redacted" do
     it "list does not show non-members" do
       jget things_path
-      expect(response).to have_http_status(:ok)
 
-      payload = parsed_body
-      expect(payload.size).to eq(0)
+      expect(response).to have_http_status(:ok)
+      expect(parsed_body.size).to eq(0)
     end
 
     it "get does not include notes" do
@@ -131,7 +134,7 @@ RSpec.describe "Things", type: :request do
   end
 
   describe "Thing authorization" do
-    let(:account)  { signup FactoryGirl.attributes_for(:user) }
+    let(:account) { signup FactoryGirl.attributes_for(:user) }
     let(:thing_props) { FactoryGirl.attributes_for(:thing, :with_fields) }
     let(:thing_resources) { 3.times.map { create_resource things_path, :thing } }
     let(:thing_id) { thing_resources[0]["id"] }
@@ -152,6 +155,7 @@ RSpec.describe "Things", type: :request do
       it_should_behave_like "cannot delete", :unauthorized
       it_should_behave_like "field(s) redacted"
     end
+
     context "caller is authenticated no role" do
       before(:each) do
         login account
@@ -165,7 +169,7 @@ RSpec.describe "Things", type: :request do
 
     context "caller is member" do
       before(:each) do
-        thing_resources.each { |t| apply_member(account,Thing.find(t["id"])) }
+        thing_resources.each { |t| apply_member(account, Thing.find(t["id"])) }
         login account
       end
 
@@ -193,7 +197,7 @@ RSpec.describe "Things", type: :request do
 
     context "caller is admin" do
       before(:each) do
-        apply_admin(account)
+        apply_admin account
         login account
       end
 

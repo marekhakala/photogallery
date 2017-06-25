@@ -5,14 +5,15 @@
     .component("sdCurrentSubjectsMap", {
       template: "<div id='map'></div>",
       controller: CurrentSubjectsMapController,
-      bindings: { zoom: "@" } });
+      bindings: { zoom: "@" }
+  });
 
   CurrentSubjectsMapController.$inject = ["$scope", "$q", "$element",
       "spa.geoloc.currentOrigin", "spa.geoloc.myLocation", "spa.geoloc.Map",
       "spa.subjects.currentSubjects", "spa.config.APP_CONFIG"];
+  function CurrentSubjectsMapController($scope, $q, $element, currentOrigin,
+      myLocation, Map, currentSubjects, APP_CONFIG) {
 
-  function CurrentSubjectsMapController($scope, $q, $element,
-    currentOrigin, myLocation, Map, currentSubjects, APP_CONFIG) {
     var vm = this;
 
     vm.$onInit = function() {
@@ -23,8 +24,8 @@
       var element = $element.find('div')[0];
 
       getLocation().then(function(location) {
-        vm.location = location;
-        initializeMap(element, location.position);
+          vm.location = location;
+          initializeMap(element, location.position);
       });
 
       $scope.$watch(function() { return currentSubjects.getImages(); },
@@ -33,7 +34,7 @@
           displaySubjects();
       });
 
-      $scope.$watch(function() { return currentSubjects.getCurrentImage(); },
+      $scope.$watch(function(){ return currentSubjects.getCurrentImage(); },
         function(link) {
           if (link) {
             vm.setActiveMarker(link.thing_id, link.image_id);
@@ -63,9 +64,12 @@
       var location = currentOrigin.getLocation();
 
       if (!location) {
-        myLocation.getCurrentLocation().then(
-          function(location) { deferred.resolve(location); },
-          function() { deferred.resolve({ position: APP_CONFIG.default_position }); });
+        myLocation.getCurrentLocation().then(function(location) {
+            deferred.resolve(location);
+          },
+          function() {
+            deferred.resolve({ position: APP_CONFIG.default_position });
+        });
       } else {
         deferred.resolve(location);
       }
@@ -74,13 +78,14 @@
     }
 
     function initializeMap(element, position) {
-      vm.map = new Map(element, { center: position,
-        zoom: vm.zoom || 18, mapTypeId: google.maps.MapTypeId.ROADMAP });
+      vm.map = new Map(element, { center: position, zoom: vm.zoom || 18,
+        mapTypeId: google.maps.MapTypeId.ROADMAP });
       displaySubjects();
     }
 
     function displaySubjects() {
       if (!vm.map) { return; }
+
       vm.map.clearMarkers();
       vm.map.displayOriginMarker(vm.originInfoWindow(vm.location));
 
@@ -122,7 +127,7 @@
     if (!this.map) {
       return;
     } else if (!thing_id && !image_id) {
-      if (this.map.getCurrentMarker().title !== 'origin') {
+      if (!this.map.getCurrentMarker() || this.map.getCurrentMarker().title !== 'origin') {
         this.map.setActiveMarker(null);
       }
     } else {
@@ -146,15 +151,19 @@
     var lng = location && location.position ? location.position.lng : "";
     var lat = location && location.position ? location.position.lat : "";
 
-    var html = [ "<div class='origin'>", "<div class='full_address'>" + full_address + "</div>",
-        "<div class='position'>", "lng: <span class='lng'>" + lng + "</span>",
-        "lat: <span class='lat'>" + lat + "</span>", "</div>", "</div>" ].join("\n");
+    var html = "<div class='origin'>\n";
+    html += "<div class='full_address'>" + full_address + "</div>\n";
+    html += "<div class='position'>\n";
+    html += "lng: <span class='lng'>" + lng + "</span>\n";
+    html += "lat: <span class='lat'>" + lat + "</span>\n";
+    html += "</div>\n</div>\n";
 
     return html;
   }
 
   CurrentSubjectsMapController.prototype.thingInfoWindow = function(ti) {
     console.log("thingInfo", ti);
+
     var html = "<div class='thing-marker-info'><div>";
     html += "<span class='id ti_id'>" + ti.id + "</span>";
     html += "<span class='id thing_id'>" + ti.thing_id + "</span>";
@@ -171,11 +180,13 @@
 
     html += "</div><img src='" + ti.image_content_url + "?width=200'>";
     html += "</div>";
+
     return html;
   }
 
   CurrentSubjectsMapController.prototype.imageInfoWindow = function(ti) {
     console.log("imageInfo", ti);
+
     var html = "<div class='image-marker-info'><div>";
     html += "<span class='id image_id'>" + ti.image_id + "</span>";
 
@@ -192,5 +203,4 @@
 
     return html;
   }
-
 })();

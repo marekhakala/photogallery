@@ -12,12 +12,11 @@
     return APP_CONFIG.current_origin_selector_html;
   }
 
-  CurrentOriginSelectorController.$inject = ["$scope",
-                                             "spa.geoloc.geocoder",
-                                             "spa.geoloc.currentOrigin",
-                                             "spa.geoloc.myLocation"];
+  CurrentOriginSelectorController.$inject = ["$scope", "spa.geoloc.geocoder",
+                                             "spa.geoloc.currentOrigin", "spa.geoloc.myLocation"];
   function CurrentOriginSelectorController($scope, geocoder, currentOrigin, myLocation) {
     var vm = this;
+
     vm.lookupAddress = lookupAddress;
     vm.getOriginAddress = getOriginAddress;
     vm.clearOrigin = clearOrigin;
@@ -59,7 +58,7 @@
         function(err) {
           console.log(err);
           vm.myPositionError = err;
-        });
+      });
     }
   }
 })();

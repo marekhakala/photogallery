@@ -6,9 +6,9 @@
 
   GeolocMapFactory.$inject = ["$timeout", "spa.config.APP_CONFIG"];
   function GeolocMapFactory($timeout, APP_CONFIG) {
-
     function GeolocMap(element, mapOptions) {
       var service = this;
+
       service.options = {}
       service.markers = [];
       service.currentMarker = null;
@@ -20,6 +20,7 @@
       if (mapOptions.center) {
         var lng = parseFloat(mapOptions.center.lng);
         var lat = parseFloat(mapOptions.center.lat);
+
         mapOptions.center = new google.maps.LatLng(lat, lng);
       }
 
@@ -29,6 +30,7 @@
     GeolocMap.prototype.center = function(mapOptions) {
       if (this.map && mapOptions) {
         this.normalizeMapOptions(mapOptions);
+
         if (mapOptions.center) {
           this.options.center = mapOptions.center;
           this.map.setCenter(this.options.center);
@@ -49,7 +51,6 @@
     GeolocMap.prototype.getMarkers = function() {
       return this.markers;
     }
-
     GeolocMap.prototype.getCurrentMarker = function() {
       return this.currentMarker;
     }
@@ -59,9 +60,9 @@
         google.maps.event.removeListener(m.listener);
         m.marker.setMap(null);
       });
+
       this.markers = [];
     }
-
     GeolocMap.prototype.clearOriginMarker = function() {
       var m = this.originMarker;
 
@@ -77,6 +78,7 @@
 
     GeolocMap.prototype.displayMarker = function(markerOptions) {
       if (!this.map) { return; }
+
       markerOptions.optimized = APP_CONFIG.optimized_markers;
       console.log("markerOptions", markerOptions);
 
@@ -97,12 +99,11 @@
       this.markers.push(markerOptions);
 
       var bounds = new google.maps.LatLngBounds();
-      angular.forEach(this.markers, function(marker){
+      angular.forEach(this.markers, function(marker) {
         bounds.extend(marker.position);
       });
 
       this.map.fitBounds(bounds);
-
       return markerOptions;
     }
 
@@ -120,8 +121,7 @@
           position: service.options.center,
           title: "origin",
           icon: APP_CONFIG.origin_marker,
-          content: content
-        });
+          content: content });
       });
     }
 
@@ -135,6 +135,7 @@
       if (markerOptions && markerOptions.infoWindow) {
         markerOptions.infoWindow.open(this.map, markerOptions.marker);
       }
+
       this.currentMarker = markerOptions;
     }
 

@@ -6,6 +6,7 @@ RSpec.describe Image, type: :model do
   context "build valid image" do
     it "default image created with random caption" do
       image = FactoryGirl.build(:image)
+
       expect(image.creator_id).to_not be_nil
       expect(image.save).to be true
     end
@@ -21,6 +22,7 @@ RSpec.describe Image, type: :model do
 
     it "image with explicit nil caption" do
       image = FactoryGirl.build(:image, caption: nil)
+
       expect(image.creator_id).to_not be_nil
       expect(image.caption).to be_nil
       expect(image.save).to be true

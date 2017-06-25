@@ -22,8 +22,7 @@
     vm.getCurrentUser = Authn.getCurrentUser;
     vm.getCurrentUserName = Authn.getCurrentUserName;
 
-    vm.$onInit = function() {
-    }
+    vm.$onInit = function() {}
 
     vm.$postLink = function() {
       vm.dropdown = $("#login-dropdown")

@@ -21,12 +21,12 @@ class PostalAddress
   end
 
   def full_address
-    if @street_address || @city || @state_code || @zip || @country_code
+    if @street_address or @city or @state_code or @zip or @country_code
       parts = []
 
       parts << @street_address if @street_address
       parts << @city if @city
-      parts << "#{state_code} #{@zip}" if @state_code || @zip
+      parts << "#{state_code} #{@zip}" if @state_code or @zip
       parts << @country_code if @country_code
       parts.join(", ").squeeze(" ")
     end

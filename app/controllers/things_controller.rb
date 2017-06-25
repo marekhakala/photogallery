@@ -1,12 +1,19 @@
 class ThingsController < ApplicationController
+  include ActionController::Helpers
+  helper ThingsHelper
+
   before_action :set_thing, only: [:show, :update, :destroy]
   before_action :authenticate_user!, only: [:create, :update, :destroy]
+
+  after_action :verify_authorized
+  after_action :verify_policy_scoped, only: [:index]
+
   wrap_parameters :thing, include: ["name", "description", "notes"]
 
   def index
     authorize Thing
-    things = policy_scope(Thing.all)
-    @things = ThingPolicy.merge(things)
+    things = policy_scope Thing.all
+    @things = ThingPolicy.merge things
   end
 
   def show
@@ -33,10 +40,9 @@ class ThingsController < ApplicationController
   end
 
   def update
-    @thing = Thing.find params[:id]
     authorize @thing
 
-    if @thing.update(thing_params)
+    if @thing.update thing_params
       head :no_content
     else
       render json: { errors: @thing.errors.messages }, status: :unprocessable_entity
@@ -46,12 +52,13 @@ class ThingsController < ApplicationController
   def destroy
     authorize @thing
     @thing.destroy
+
     head :no_content
   end
 
   private
     def set_thing
-      @thing = Thing.find(params[:id])
+      @thing = Thing.find params[:id]
     end
 
     def thing_params

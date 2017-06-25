@@ -12,8 +12,7 @@
       controllerAs: "idVM",
       restrict: "A",
       scope: false,
-      link: link
-    };
+      link: link };
 
     return directive;
 
@@ -38,6 +37,7 @@
 
     function getServerUser() {
       vm.server.whoAmI = null;
+
       whoAmI.get().$promise.then(
         function(value) { vm.server.whoAmI = value; },
         function(value) { vm.server.whoAmI = value; }
@@ -46,6 +46,7 @@
 
     function checkServerUser() {
       vm.server.checkMe = null;
+      
       checkMe.get().$promise.then(
         function(value) { vm.server.checkMe = value; },
         function(value) { vm.server.checkMe = value; }

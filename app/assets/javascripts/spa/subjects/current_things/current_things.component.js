@@ -24,6 +24,7 @@
   CurrentThingsController.$inject = ["$scope", "spa.subjects.currentSubjects"];
   function CurrentThingsController($scope, currentSubjects) {
     var vm = this;
+
     vm.thingClicked = thingClicked;
     vm.isCurrentThing = currentSubjects.isCurrentThingIndex;
 
@@ -32,8 +33,7 @@
     }
 
     vm.$postLink = function() {
-      $scope.$watch(
-        function() { return currentSubjects.getThings(); },
+      $scope.$watch(function() { return currentSubjects.getThings(); },
         function(things) { vm.things = things; }
       );
     }
@@ -48,6 +48,7 @@
                                         "spa.subjects.Thing", "spa.authz.Authz"];
   function CurrentThingInfoController($scope,currentSubjects, Thing, Authz) {
     var vm = this;
+
     vm.nextThing = currentSubjects.nextThing;
     vm.previousThing = currentSubjects.previousThing;
 
@@ -56,14 +57,9 @@
     }
 
     vm.$postLink = function() {
-      $scope.$watch(
-        function() { return currentSubjects.getCurrentThing(); },
-        newThing
-      );
-      $scope.$watch(
-        function() { return Authz.getAuthorizedUserId(); },
-        function() { newThing(currentSubjects.getCurrentThing()); }
-      );
+      $scope.$watch(function() { return currentSubjects.getCurrentThing(); }, newThing);
+      $scope.$watch(function() { return Authz.getAuthorizedUserId(); },
+        function() { newThing(currentSubjects.getCurrentThing()); });
     }
     return;
 

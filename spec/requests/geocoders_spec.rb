@@ -52,7 +52,6 @@ RSpec.describe "Geocoders", type: :request do
 
       it "locates location by position" do
         jget geocoder_positions_path, search_position.to_hash
-
         expect(response).to have_http_status(:ok)
         payload = parsed_body
 
@@ -89,7 +88,7 @@ RSpec.describe "Geocoders", type: :request do
       end
 
       it "caches location by position" do
-        expect(result=geocoder_cache.reverse_geocode(search_position)).to_not be_nil
+        expect(result = geocoder_cache.reverse_geocode(search_position)).to_not be_nil
         expect(CachedLocation.by_position(search_position).count).to eq(@expected_positions)
 
         3.times do
@@ -102,19 +101,23 @@ RSpec.describe "Geocoders", type: :request do
     context "API" do
       it "caches location by address" do
         jget geocoder_addresses_path, { address: search_address }
+
         expect(response).to have_http_status(:ok)
         expect(CachedLocation.by_address(search_address).count).to eq(1)
 
         3.times do
           etag = response.headers["ETag"]
           jget geocoder_addresses_path, { address: search_address }, { "If-None-Match" => etag }
+
           expect(response).to have_http_status(:not_modified)
           expect(CachedLocation.by_address(search_address).count).to eq(1)
         end
 
         cache = nil
+
         3.times do
           jget geocoder_addresses_path, { address: search_address }
+
           expect(response).to have_http_status(:ok)
           expect(CachedLocation.by_address(search_address).count).to eq(1)
         end
@@ -122,11 +125,13 @@ RSpec.describe "Geocoders", type: :request do
 
       it "caches location by position" do
         jget geocoder_positions_path, search_position.to_hash
+
         expect(response).to have_http_status(:ok)
         expect(CachedLocation.by_position(search_position).count).to eq(@expected_positions)
 
         3.times do
           jget geocoder_positions_path, search_position.to_hash
+
           expect(response).to have_http_status(:ok)
           expect(CachedLocation.by_position(search_position).count).to eq(@expected_positions)
         end
@@ -134,6 +139,7 @@ RSpec.describe "Geocoders", type: :request do
         3.times do
           etag = response.headers["ETag"]
           jget geocoder_positions_path, search_position.to_hash, { "If-None-Match" => etag }
+
           expect(response).to have_http_status(:not_modified)
           expect(CachedLocation.by_position(search_position).count).to eq(@expected_positions)
         end
@@ -189,6 +195,7 @@ RSpec.describe "Geocoders", type: :request do
 
     before(:each) do
       unless Thing.exists?
+
         10.times do
           thing = FactoryGirl.create(:thing)
 
@@ -200,17 +207,18 @@ RSpec.describe "Geocoders", type: :request do
       end
 
       @origin = FactoryGirl.build(:point)
-      distances = ThingImage.with_distance(@origin, ThingImage.things).map {|ti| ti.distance }
+      distances = ThingImage.with_distance(@origin, ThingImage.things).map { |ti| ti.distance }
       @distance = distances.reduce(:+) / distances.size.to_f
     end
 
     describe "search origin" do
       it "within range by position" do
-        results = ThingImage.within_range(@origin, @distance)
+        results = ThingImage.within_range @origin, @distance
         jget subjects_path, { miles: @distance }.merge(@origin.to_hash)
-        expect(response).to have_http_status(:ok)
 
+        expect(response).to have_http_status(:ok)
         payload = parsed_body
+
         expect(payload.size).to eq(results.size)
         expect(payload[0]).to include("thing_id", "thing_name")
         expect(payload[0]).to include("image_id", "image_caption", "image_content_url")
@@ -224,6 +232,7 @@ RSpec.describe "Geocoders", type: :request do
       it "finds things" do
         results = ThingImage.within_range(@origin, @distance).things
         expect(results.size).to be > 0
+
         jget subjects_path, { miles: @distance, subject: Thing.name }.merge(@origin.to_hash)
         expect(response).to have_http_status(:ok)
 
@@ -240,25 +249,22 @@ RSpec.describe "Geocoders", type: :request do
       it "finds images" do
         expect(ThingImage.within_range(@origin, @distance).things.size).to be > 0
         images_without_things = create_images_near @origin, 10, 10
+
         jget subjects_path, { miles: 100, distance: true }.merge(@origin.to_hash)
-
         expect(response).to have_http_status(:ok)
+
         payload = parsed_body
-
         expect(payload.size).to be >= images_without_things.size
+
         found = 0
-
-        payload.each do |ti|
-          found += 1 if images_without_things.include? ti["image_id"]
-        end
-
+        payload.each { |ti| found += 1 if images_without_things.include? ti["image_id"] }
         expect(found).to eq(images_without_things.size)
       end
     end
 
     shared_examples "ordered" do |direction|
       it "ordered #{direction}" do
-        results = ThingImage.within_range(@origin, @distance)
+        results = ThingImage.within_range @origin, @distance
         jget subjects_path, { miles: @distance, distance: true, order: direction }.merge(@origin.to_hash)
         expect(response).to have_http_status(:ok)
 
@@ -268,11 +274,8 @@ RSpec.describe "Geocoders", type: :request do
 
         parsed_body.each do |ti|
           expect(ti).to include("distance")
-
-          if last_distance
-            expect(ti["distance"]).to be >= last_distance if direction == :ASC
-            expect(ti["distance"]).to be <= last_distance if direction == :DESC
-          end
+          expect(ti["distance"]).to be >= last_distance if last_distance and direction == :ASC
+          expect(ti["distance"]).to be <= last_distance if last_distance and direction == :DESC
 
           last_distance = ti["distance"]
         end
@@ -281,20 +284,17 @@ RSpec.describe "Geocoders", type: :request do
 
     describe "results finishing" do
       it "simple bag of results" do
-        results = ThingImage.within_range(@origin, @distance)
+        results = ThingImage.within_range @origin, @distance
         jget subjects_path, { miles: @distance }.merge(@origin.to_hash)
         expect(response).to have_http_status(:ok)
 
         payload = parsed_body
         expect(payload.size).to eq(results.size)
-
-        parsed_body.each do |ti|
-          expect(ti).to_not include("distance")
-        end
+        parsed_body.each { |ti| expect(ti).to_not include("distance") }
       end
 
       it "has distance from origin" do
-        results = ThingImage.within_range(@origin, @distance)
+        results = ThingImage.within_range @origin, @distance
         jget subjects_path, { miles: @distance, distance: true }.merge(@origin.to_hash)
         expect(response).to have_http_status(:ok)
 
@@ -323,22 +323,24 @@ RSpec.describe "Geocoders", type: :request do
       it "provides cache control" do
         jget subjects_path, { miles: @distance, distance: true }.merge(@origin.to_hash)
         expect(response).to have_http_status(:ok)
-
         expect(response.headers).to include("Cache-Control")
-        cc = response.headers["Cache-Control"]
 
+        cc = response.headers["Cache-Control"]
         expect(cc).to include("max-age=60")
         expect(cc).to include("public")
       end
 
       it "provides cache re-validation unmodified" do
-        jget subjects_path, { miles: @distance, distance: true }.merge(@origin.to_hash), { "IF-NONE-MATCH" => @starting_eTag }
+        jget subjects_path, { miles: @distance, distance: true }.merge(@origin.to_hash),
+          { "IF-NONE-MATCH" => @starting_eTag }
+
         expect(response).to have_http_status(:not_modified)
         expect(response.headers["ETag"]).to eq(@starting_eTag)
       end
 
       it "updates eTag for a Thing" do
         sleep 1
+
         t = ThingImage.first.thing
         t.name = "we have changed you"
         t.save
@@ -350,9 +352,8 @@ RSpec.describe "Geocoders", type: :request do
 
       context "updates eTag for ThingImage" do
         let(:ti) { ThingImage.first }
-        before(:each) do
-          sleep 1
-        end
+
+        before(:each) { sleep 1 }
 
         it "updates eTag for ThingImage update" do
           ti.priority += 1
@@ -365,6 +366,7 @@ RSpec.describe "Geocoders", type: :request do
 
         it "updates eTag for ThingImage delete" do
           login apply_admin(user)
+
           jdelete thing_thing_image_path(ti.thing, ti)
           expect(response).to have_http_status(:no_content)
 
@@ -376,6 +378,7 @@ RSpec.describe "Geocoders", type: :request do
 
       it "updates eTag for Image" do
         sleep 1
+
         img = Image.first
         img.caption = "we changed you"
         img.save

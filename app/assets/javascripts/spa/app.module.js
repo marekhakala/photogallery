@@ -1,8 +1,7 @@
 (function() {
   "use strict";
 
-  angular
-    .module("spa", [
+  var app = angular.module("spa", [
       "ui.router",
       "ngFileUpload",
       "uiCropper",
@@ -14,4 +13,10 @@
       "spa.foos",
       "spa.subjects"
     ]);
+
+  app.filter('capitalize', function() {
+    return function(input) {
+      return (!!input) ? input.charAt(0).toUpperCase() + input.substr(1).toLowerCase() : '';
+    }
+  });
 })();

@@ -2,6 +2,7 @@ require 'rails_helper'
 
 RSpec.describe "Images", type: :request do
   include_context "db_cleanup_each"
+
   let(:account) { signup FactoryGirl.attributes_for(:user) }
 
   context "quick API check" do
@@ -43,8 +44,6 @@ RSpec.describe "Images", type: :request do
   shared_examples "can create" do
     it "is created" do
       jpost images_path, image_props
-
-      pp parsed_body
       expect(response).to have_http_status(:created)
 
       payload = parsed_body
@@ -52,7 +51,7 @@ RSpec.describe "Images", type: :request do
       expect(payload).to include("caption" => image_props[:caption])
       expect(payload).to include("user_roles")
       expect(payload["user_roles"]).to include(Role::ORGANIZER)
-      expect(Role.where(:user_id=>user["id"],:role_name=>Role::ORGANIZER)).to exist
+      expect(Role.where(user_id: user["id"], role_name: Role::ORGANIZER)).to exist
     end
   end
 
@@ -77,7 +76,7 @@ RSpec.describe "Images", type: :request do
 
       payload = parsed_body
       expect(payload.size).to_not eq(0)
-=begin
+
       payload.each do |r|
         expect(r).to include("id")
         expect(r).to include("caption")
@@ -89,7 +88,6 @@ RSpec.describe "Images", type: :request do
           expect(r["user_roles"].to_a).to include(*user_roles)
         end
       end
-=end
     end
 
     it "get has all fields with user_roles #{user_roles}" do
@@ -110,6 +108,7 @@ RSpec.describe "Images", type: :request do
   end
 
   describe "Image authorization" do
+
     let(:alt_account) { signup FactoryGirl.attributes_for(:user) }
     let(:admin_account) { apply_admin(signup FactoryGirl.attributes_for(:user)) }
     let(:image_props) { FactoryGirl.attributes_for(:image, :with_caption) }
@@ -118,7 +117,11 @@ RSpec.describe "Images", type: :request do
     let(:image) { Image.find(image_id) }
 
     context "caller is unauthenticated" do
-      before(:each) { login account; image_resources; logout }
+      before(:each) do
+        login account
+        image_resources
+        logout
+      end
 
       it_should_behave_like "cannot create"
       it_should_behave_like "cannot update", :unauthorized
@@ -137,7 +140,11 @@ RSpec.describe "Images", type: :request do
     end
 
     context "caller is authenticated non-organizer" do
-      before(:each) { login account; image_resources; login alt_account }
+      before(:each) do
+        login account
+        image_resources
+        login alt_account
+      end
 
       it_should_behave_like "cannot update", :forbidden
       it_should_behave_like "cannot delete", :forbidden
@@ -145,7 +152,11 @@ RSpec.describe "Images", type: :request do
     end
 
     context "caller is admin" do
-      before(:each) { login account; image_resources; login admin_account }
+      before(:each) do
+        login account
+        image_resources
+        login admin_account
+      end
 
       it_should_behave_like "cannot update", :forbidden
       it_should_behave_like "can delete"
@@ -159,14 +170,12 @@ RSpec.describe "Images", type: :request do
       originator = FactoryGirl.create(:user)
       image = FactoryGirl.create(:image, creator_id: originator.id)
 
-      roles.each do |role|
-        originator.add_role(role,image).save
-      end
+      roles.each { |role| originator.add_role(role, image).save }
 
       login originator
       jget images_path
-
       expect(response).to have_http_status(:ok)
+
       payload = parsed_body
       expect(payload.size).to eq(1)
       expect(payload[0]).to include("user_roles")

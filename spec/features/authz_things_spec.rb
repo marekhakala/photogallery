@@ -11,13 +11,13 @@ RSpec.feature "AuthzThings", type: :feature, js: true do
   let(:member) { create_user }
   let(:authenticated) { create_user }
   let(:thing_props) { FactoryGirl.attributes_for(:thing) }
-  let(:things) { FactoryGirl.create_list(:thing, 3, :with_roles, originator_id: originator[:id], member_id: member[:id]) }
+  let(:things) { FactoryGirl.create_list(:thing, 3, :with_roles,
+    originator_id: originator[:id], member_id: member[:id]) }
   let(:thing) { things[0] }
 
   shared_examples "cannot list things" do
     it "does not list things" do
       visit_things things
-
       expect(page).to have_css(".thing-list", visible: false)
     end
   end
@@ -29,7 +29,7 @@ RSpec.feature "AuthzThings", type: :feature, js: true do
       within("sd-thing-selector .thing-list") do
         things.each do |t|
           expect(page).to have_css("li a", text: t.name)
-          expect(page).to have_css(".thing_id",text: t.id, visible: false)
+          expect(page).to have_css(".thing_id", text: t.id, visible: false)
           expect(page).to have_no_css(".thing_id")
         end
       end
@@ -38,14 +38,14 @@ RSpec.feature "AuthzThings", type: :feature, js: true do
 
   shared_examples "displays correct buttons for role" do |displayed, not_displayed|
     it "displays correct buttons" do
+
       within("sd-thing-editor .thing-form") do
         displayed.each do |button|
-          disabled_value = ["Create Thing","Update Thing"].include? button
+          disabled_value = ["Create Thing", "Update Thing"].include? button
           expect(page).to have_button(button, disabled: disabled_value, wait: 5)
         end
-        not_displayed.each do |button|
-          expect(page).to_not have_button(button)
-        end
+
+        not_displayed.each { |button| expect(page).to_not have_button(button) }
       end
     end
   end
@@ -58,6 +58,7 @@ RSpec.feature "AuthzThings", type: :feature, js: true do
         expect(page).to have_no_field("thing-notes")
       end
     end
+
     it "cannot create invalid thing" do
       within("sd-thing-editor .thing-form") do
         expect(page).to have_field("thing-name", with: "")
@@ -72,6 +73,7 @@ RSpec.feature "AuthzThings", type: :feature, js: true do
         fill_in("thing-name", with: thing_props[:name])
         fill_in("thing-desc", with: thing_props[:description])
         fill_in("thing-notes", with: thing_props[:notes])
+
         click_button("Create Thing")
         expect(page).to have_no_button("Create Thing")
       end
@@ -98,8 +100,8 @@ RSpec.feature "AuthzThings", type: :feature, js: true do
       within("sd-thing-editor .thing-form") do
         expect(page).to have_css(".thing_id", text: thing.id, visible: false)
         expect(page).to have_field("thing-name", with: thing.name)
-
         click_button("Clear Thing")
+
         expect(page).to have_no_css(".thing_id", text: thing.id, visible: false)
         expect(page).to have_field("thing-name", with: "")
         expect(page).to have_field("thing-desc", visible: false, with: "")
@@ -117,6 +119,7 @@ RSpec.feature "AuthzThings", type: :feature, js: true do
       end
     end
   end
+
   shared_examples "can see details" do |readonly|
     it "shows details" do
       within("sd-thing-editor .thing-form") do
@@ -132,10 +135,7 @@ RSpec.feature "AuthzThings", type: :feature, js: true do
       within("sd-thing-editor .thing-form") do
         expect(page).to have_field("thing-name", with: thing.name, readonly: true)
         expect(page).to have_field("thing-desc", with: thing.description, readonly: true)
-
-        if page.has_field?("thing-notes")
-          expect(page).to have_field("thing-notes", with: thing.notes, readonly: true)
-        end
+        expect(page).to have_field("thing-notes", with: thing.notes, readonly: true) if page.has_field?("thing-notes")
       end
     end
   end
@@ -163,11 +163,11 @@ RSpec.feature "AuthzThings", type: :feature, js: true do
   def update_text_field field_name
     within("sd-thing-editor .thing-form") do
       expect(page).to have_no_button("Update Thing")
+
       new_text = Faker::Lorem.characters(5000)
-
       fill_in(field_name, with: new_text)
-      text_field = find("textarea[name='#{field_name}']")
 
+      text_field = find("textarea[name='#{field_name}']")
       expect(text_field.value.size).to eq(4000)
       expect(text_field.value).to eq(new_text.slice(0,4000))
     end
@@ -176,12 +176,13 @@ RSpec.feature "AuthzThings", type: :feature, js: true do
   shared_examples "cannot update to invalid thing" do
     it "cannot update with invalid name" do
       within("sd-thing-editor .thing-form") do
+
         expect(page).to have_no_button("Update Thing")
-
         fill_in("thing-name", with: "abc")
-        expect(page).to have_button("Update Thing", disabled: false)
 
+        expect(page).to have_button("Update Thing", disabled: false)
         fill_in("thing-name", with: "")
+
         expect(page).to have_button("Update Thing", disabled: true)
       end
     end
@@ -197,15 +198,14 @@ RSpec.feature "AuthzThings", type: :feature, js: true do
 
   shared_examples "can delete thing" do
     it "deletes thing" do
-      visit_things things
 
+      visit_things things
       within("sd-thing-selector .thing-list") do
         expect(page).to have_css(".thing_id", text: thing.id, visible: false)
         expect(page).to have_css("li a", text: thing.name)
       end
 
       visit_thing thing
-
       within("sd-thing-editor .thing-form") do
         click_button("Delete Thing")
         expect(page).to have_no_button("Delete Thing", wait: 5)
@@ -226,32 +226,41 @@ RSpec.feature "AuthzThings", type: :feature, js: true do
 
       it_behaves_like "cannot list things"
       it_behaves_like "displays correct buttons for role",
-          [], ["Create Thing", "Clear Thing", "Update Thing", "Delete Thing"]
+        [], ["Create Thing", "Clear Thing", "Update Thing", "Delete Thing"]
     end
 
     context "authenticated user" do
-      before(:each) { login authenticated; visit_things things }
+      before(:each) do
+        login authenticated
+        visit_things things
+      end
 
       it_behaves_like "cannot list things"
       it_behaves_like "displays correct buttons for role",
-          [], ["Create Thing"], ["Clear Thing", "Update Thing", "Delete Thing"]
+        [], ["Create Thing"], ["Clear Thing", "Update Thing", "Delete Thing"]
     end
 
     context "originator user" do
-      before(:each) { login originator; visit_things things }
+      before(:each) do
+        login originator
+        visit_things things
+      end
 
       it_behaves_like "displays correct buttons for role",
-          ["Create Thing"], ["Clear Thing", "Update Thing", "Delete Thing"]
+        ["Create Thing"], ["Clear Thing", "Update Thing", "Delete Thing"]
       it_behaves_like "can list things"
       it_behaves_like "organizer has invalid thing"
       it_behaves_like "can create valid thing"
     end
 
     context "admin user" do
-      before(:each) { login admin; visit_things things }
+      before(:each) do
+        login admin
+        visit_things things
+      end
 
       it_behaves_like "displays correct buttons for role",
-          [], ["Create Thing", "Clear Thing", "Update Thing", "Delete Thing"]
+        [], ["Create Thing", "Clear Thing", "Update Thing", "Delete Thing"]
       it_behaves_like "can list things"
     end
   end
@@ -264,12 +273,14 @@ RSpec.feature "AuthzThings", type: :feature, js: true do
 
       expect(page).to have_css("sd-thing-selector")
     end
+
     after(:each) { logout }
 
     def select_thing
       within("sd-thing-selector .thing-list") do
         find("span.thing_id", text: thing.id, visible: false).find(:xpath, "..").click
       end
+
       within("sd-thing-editor .thing-form") do
         expect(page).to have_css("span.thing_id", text: thing.id, visible: false)
       end
@@ -282,7 +293,7 @@ RSpec.feature "AuthzThings", type: :feature, js: true do
         before(:each) { visit "#{ui_path}/#/things/#{thing.id}" }
 
         it_behaves_like "displays correct buttons for role",
-            [], ["Clear Thing"], ["Create Thing", "Update Thing", "Delete Thing"]
+          [], ["Clear Thing"], ["Create Thing", "Update Thing", "Delete Thing"]
         it_behaves_like "cannot see details"
       end
 
@@ -290,16 +301,18 @@ RSpec.feature "AuthzThings", type: :feature, js: true do
         before(:each) { visit "#{ui_path}/#/things/#{thing.id}" }
 
         it_behaves_like "displays correct buttons for role",
-            [], ["Clear Thing", "Create Thing", "Update Thing", "Delete Thing"]
+          [], ["Clear Thing", "Create Thing", "Update Thing", "Delete Thing"]
         it_behaves_like "cannot see details"
       end
 
       context "member user" do
-        before(:each) { login member; select_thing }
+        before(:each) do
+          login member
+          select_thing
+        end
 
         it_behaves_like "displays correct buttons for role",
-        ["Clear Thing"], ["Create Thing", "Update Thing", "Delete Thing"]
-
+          ["Clear Thing"], ["Create Thing", "Update Thing", "Delete Thing"]
         it_behaves_like "displays thing"
         it_behaves_like "can see details", true
         it_behaves_like "can clear thing"
@@ -307,11 +320,13 @@ RSpec.feature "AuthzThings", type: :feature, js: true do
       end
 
       context "organizer user" do
-        before(:each) { login organizer; select_thing }
+        before(:each) do
+          login organizer
+          select_thing
+        end
 
         it_behaves_like "displays correct buttons for role",
           ["Clear Thing", "Update Thing", "Delete Thing"], ["Create Thing"]
-
         it_behaves_like "displays thing"
         it_behaves_like "can see details", false
         it_behaves_like "can clear thing"
@@ -321,11 +336,13 @@ RSpec.feature "AuthzThings", type: :feature, js: true do
       end
 
       context "admin user" do
-        before(:each) { login admin; select_thing }
+        before(:each) do
+          login admin
+          select_thing
+        end
 
         it_behaves_like "displays correct buttons for role",
           ["Clear Thing", "Delete Thing"], ["Create Thing", "Update Thing"]
-
         it_behaves_like "displays thing"
         it_behaves_like "can see details", true
         it_behaves_like "can clear thing"
@@ -342,7 +359,7 @@ RSpec.feature "AuthzThings", type: :feature, js: true do
         within("sd-thing-editor .thing-form") do
           expect(page).to have_field("thing-name", with: thing.name)
           expect(page).to have_field("thing-desc", visible: true, readonly: false)
-          expect(page).to have_field("thing-notes",visible: true, readonly: false)
+          expect(page).to have_field("thing-notes", visible: true, readonly: false)
           expect(page).to have_css("button")
         end
 

@@ -10,7 +10,7 @@ RSpec.describe Role, type: :model do
       user.roles.create(role_name: Role::ORGANIZER, mname: "Bar", mid: 1)
       user.roles.create(role_name: Role::MEMBER, mname: "Baz", mid: 1)
 
-      db_user = User.find(user.id)
+      db_user = User.find user.id
       expect(db_user.has_role([Role::ADMIN])).to be true
       expect(db_user.has_role([Role::ORIGINATOR], "Bar")).to be false
       expect(db_user.has_role([Role::ORIGINATOR], "Foo")).to be true
@@ -29,7 +29,7 @@ RSpec.describe Role, type: :model do
     end
 
     it "creates admin" do
-      db_user = User.find(db_admin.id)
+      db_user = User.find db_admin.id
       expect(db_user.has_role([Role::ADMIN], User.name)).to be true
     end
   end
@@ -45,8 +45,8 @@ RSpec.describe Role, type: :model do
     end
 
     it "creates admin" do
-      db_user = User.find(db_o.id)
-      expect(db_user.has_role([Role::ORIGINATOR],User.name)).to be true
+      db_user = User.find db_o.id
+      expect(db_user.has_role([Role::ORIGINATOR], User.name)).to be true
     end
   end
 end

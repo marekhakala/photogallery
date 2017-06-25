@@ -5,12 +5,14 @@ gem 'rails-api', '~> 0.4'
 gem 'pry-rails', '~> 0.3'
 gem 'rack-cors', '~> 0.4', require: 'rack/cors'
 gem 'jbuilder', '~> 2.0'
+gem 'figaro', '~> 1.1'
 gem 'pundit', '~> 1.1'
 gem 'exifr', '~> 1.2'
 gem 'mini_magick', '~> 4.5'
 gem 'geokit-rails', '~> 2.2'
 gem 'devise_token_auth', '~> 0.1'
 
+gem 'fontawesome-rails', '~> 4.0'
 gem 'coffee-rails', '~> 4.1'
 gem 'jquery-rails', '~> 4.2'
 gem 'sass-rails', '~> 5.0'
@@ -30,6 +32,7 @@ group :development, :test do
 
   gem 'capybara', '~> 2.10'
   gem 'poltergeist', '~> 1.11'
+  gem 'phantomjs', :require => 'phantomjs/poltergeist'
   gem 'selenium-webdriver', '~> 2.53'
   gem 'chromedriver-helper', '~> 1.0'
   gem 'launchy', '~> 2.4'
@@ -44,8 +47,8 @@ gem 'mongoid', '~> 5.1'
 gem 'database_cleaner', '~> 1.5'
 gem 'puma', '~> 3.6', platforms: :ruby
 
-gem 'faker', '~>1.6'
-gem 'factory_girl_rails', '~>4.7'
+gem 'faker', '~> 1.6'
+gem 'factory_girl_rails', '~> 4.7'
 
 #source 'https://rails-assets.org' do
 source 'http://insecure.rails-assets.org' do

@@ -5,9 +5,7 @@ RSpec.feature "SubjectLayouts", type: :feature, js: true do
   include_context "db_cleanup"
   include SubjectsUiHelper
 
-  before(:each) do
-    visit_subjects
-  end
+  before(:each) { visit_subjects }
 
   describe "subjects page" do
     it "displays subject page" do
@@ -47,7 +45,7 @@ RSpec.feature "SubjectLayouts", type: :feature, js: true do
             expect(page).to have_css("ul.tab-label")
             expect(page).to have_css("div.tab-content")
 
-            tabs.each_with_index do |tab,idx|
+            tabs.each_with_index do |tab, idx|
               within ("ul.tab-label") do
                 expect(page).to have_css("li a ", text: tab[:label])
               end
@@ -80,6 +78,7 @@ RSpec.feature "SubjectLayouts", type: :feature, js: true do
 
     it "#{area[:label]} area is expandable" do
       find("sd-area[label='#{area[:label]}'] div.area-pane")
+
       within("sd-area[label='#{area[:label]}']") do
         find("div.area-pane input[name='collapse-area']").click
       end
@@ -96,14 +95,12 @@ RSpec.feature "SubjectLayouts", type: :feature, js: true do
   end
 
   describe "Details Area" do
-    it_behaves_like "area", { label: "Details" },
-      [{ label: "Thing" }, { label: "Image" }]
+    it_behaves_like "area", { label: "Details" }, [{ label: "Thing" }, { label: "Image" }]
   end
 
   describe "Map Area" do
-    it_behaves_like "area", { label: "Map" },
-      [{ label: "Map" }, { label: "Things" }, { label: "Images" },
-       { label: "Thing" }, { label: "Image" }]
+    it_behaves_like "area", { label: "Map" }, [{ label: "Map" }, { label: "Things" },
+      { label: "Images" }, { label: "Thing" }, { label: "Image" }]
   end
 
   describe "area sides" do

@@ -4,8 +4,7 @@
   angular.module("spa.subjects")
     .factory("spa.subjects.ThingsAuthz", ThingsAuthzFactory);
 
-  ThingsAuthzFactory.$inject = ["spa.authz.Authz",
-                                "spa.authz.BasePolicy"];
+  ThingsAuthzFactory.$inject = ["spa.authz.Authz", "spa.authz.BasePolicy"];
   function ThingsAuthzFactory(Authz, BasePolicy) {
     function ThingsAuthz() {
       BasePolicy.call(this, "Thing");

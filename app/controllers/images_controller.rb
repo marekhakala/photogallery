@@ -1,15 +1,23 @@
 class ImagesController < ApplicationController
   before_action :set_image, only: [:show, :update, :destroy, :content]
-  wrap_parameters :image, include: ["caption", "position"]
   before_action :authenticate_user!, only: [:create, :update, :destroy]
+
   after_action :verify_authorized, except: [:content]
   after_action :verify_policy_scoped, only: [:index]
 
+  wrap_parameters :image, include: ["caption", "position"]
   rescue_from EXIFR::MalformedJPEG, with: :contents_error
 
   def index
     authorize Image
-    @images = ImagePolicy.merge(@images)
+    @images = policy_scope Image.all
+    @images = ImagePolicy.merge @images
+  end
+
+  def show
+    authorize @image
+    images = policy_scope Image.where(id: @image.id)
+    @image = ImagePolicy.merge(images).first
   end
 
   def content
@@ -19,18 +27,14 @@ class ImagesController < ApplicationController
       expires_in 1.year, public: true
 
       if stale? result
-        options = { type: result.content_type, disposition: "inline", filename: "#{@image.basename}.#{result.suffix}" }
+        options = { type: result.content_type, disposition: "inline",
+                    filename: "#{@image.basename}.#{result.suffix}" }
+
         send_data result.content.data, options
       end
     else
       render nothing: true, status: :not_found
     end
-  end
-
-  def show
-    authorize @image
-    images = policy_scope(Image.where(id: @image.id))
-    @image = ImagePolicy.merge(images).first
   end
 
   def create
@@ -62,7 +66,7 @@ class ImagesController < ApplicationController
     if @image.update image_params
       head :no_content
     else
-      render json: { errors:@image.errors.messages }, status: :unprocessable_entity
+      render json: { errors: @image.errors.messages }, status: :unprocessable_entity
     end
   end
 
@@ -76,27 +80,29 @@ class ImagesController < ApplicationController
 
   private
     def set_image
-      @image = Image.find(params[:id])
+      @image = Image.find params[:id]
     end
 
     def image_params
-      params.require(:image).permit(:caption, position: [:lng, :lat])
+      params.require(:image).permit(:caption, :position => [:lng, :lat])
     end
 
     def image_content_params
-      params.require(:image_content).tap { |ic|
-        ic.require(:content_type)
-        ic.require(:content)
-      }.permit(:content_type, :content)
+      params.require(:image_content).tap { |ic| ic.require(:content_type)
+        ic.require(:content) }.permit(:content_type, :content)
     end
 
     def contents_error exception
-      render json: { errors: { full_messages: ["unable to create image contents","#{exception}"] } }, status: :unprocessable_entity
+      render json: { errors:
+        { full_messages: ["unable to create image contents","#{exception}"] } }, status: :unprocessable_entity
       Rails.logger.debug exception
     end
 
     def mongoid_validation_error exception
-      payload = { errors:exception.record.errors.messages.slice(:content_type,:content,:full_messages).merge(full_messages:["unable to create image contents"]) }
+      payload = { errors: exception.record.errors.messages
+        .slice(:content_type, :content, :full_messages)
+        .merge(full_messages:["unable to create image contents"]) }
+
       render json: payload, status: :unprocessable_entity
       Rails.logger.debug exception.message
     end

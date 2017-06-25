@@ -3,11 +3,10 @@
 
   angular.module("spa.subjects")
     .directive("sdImagesAuthz", ImagesAuthzDirective);
-
   ImagesAuthzDirective.$inject = [];
+
   function ImagesAuthzDirective() {
-    var directive = {
-        bindToController: true,
+    var directive = { bindToController: true,
         controller: ImagesAuthzController,
         controllerAs: "vm",
         restrict: "A",
@@ -22,19 +21,18 @@
     var vm = this;
 
     vm.authz = {};
+    vm.authz.canUpdateItem = canUpdateItem;
     vm.newItem = newItem;
 
     activate();
     return;
 
     function activate() {
-      vm.resetAccess();
       vm.newItem(null);
     }
 
     function newItem(item) {
-      ImagesAuthz.getAuthorizedUser().then(
-        function(user) { authzUserItem(item, user); },
+      ImagesAuthz.getAuthorizedUser().then(function(user) { authzUserItem(item, user); },
         function(user) { authzUserItem(item, user); });
     }
 
@@ -47,25 +45,10 @@
         vm.authz.canUpdate = false;
         vm.authz.canDelete = false;
         vm.authz.canGetDetails = false;
+
         item.$promise.then(function() { checkAccess(item); });
       } else {
         checkAccess(item);
-      }
-    }
-
-    function newUser(user, prevUser) {
-      console.log("newUser=",user,", prev=",prevUser);
-
-      vm.authz.canQuery = true;
-      vm.authz.authenticated = Authn.isAuthenticated();
-
-      if (vm.authz.authenticated) {
-        vm.authz.canCreate = true;
-        vm.authz.canUpdate = true,
-        vm.authz.canDelete = true,
-        vm.authz.canGetDetails = true;
-      } else {
-        vm.resetAccess();
       }
     }
 

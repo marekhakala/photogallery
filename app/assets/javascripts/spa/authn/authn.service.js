@@ -1,13 +1,13 @@
 (function() {
   "use strict";
 
-  angular
-    .module("spa.authn")
+  angular.module("spa.authn")
     .service("spa.authn.Authn", Authn);
 
-  Authn.$inject = ["$auth","$q"];
+  Authn.$inject = ["$auth", "$q"];
   function Authn($auth, $q) {
     var service = this;
+
     service.signup = signup;
     service.user = null;
     service.isAuthenticated = isAuthenticated;
@@ -22,9 +22,9 @@
 
     function activate() {
       $auth.validateUser().then(function(user) {
-          service.user = user;
-          console.log("validated user", user);
-        });
+        service.user = user;
+        console.log("validated user", user);
+      });
     }
 
     function signup(registration) {
@@ -79,11 +79,11 @@
           service.user = null;
           console.log("logout complete", response);
         },
-        function(response){
+        function(response) {
           service.user = null;
           console.log("logout failure", response);
           alert(response.status + ":" + response.statusText);
-        });
+      });
 
       return result;
     }

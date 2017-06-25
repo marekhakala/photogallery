@@ -1,6 +1,7 @@
 class Image < ActiveRecord::Base
   include Protectable
   attr_accessor :image_content
+  
   has_many :thing_images, inverse_of: :image, dependent: :destroy
   has_many :things, through: :thing_images
 
@@ -10,7 +11,7 @@ class Image < ActiveRecord::Base
   acts_as_mappable
 
   def to_lat_lng
-    Geokit::LatLng.new(lat, lng)
+    Geokit::LatLng.new lat, lng
   end
 
   def basename

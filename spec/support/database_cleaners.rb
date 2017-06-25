@@ -7,39 +7,22 @@ shared_context "db_cleanup" do |ar_strategy = :truncation|
     DatabaseCleaner.clean_with(:truncation, { :except => %w(locations) })
   end
 
-  after(:each, type: feature) do
-    Capybara.reset_sessions!
-  end
-
-  after(:all) do
-    DatabaseCleaner.clean_with(:truncation, { :except => %w(locations) })
-  end
+  after(:each, type: feature) { Capybara.reset_sessions! }
+  after(:all) { DatabaseCleaner.clean_with(:truncation, { :except => %w(locations) }) }
 end
 
 shared_context "db_scope" do
-  before(:each) do
-    DatabaseCleaner.start
-  end
-
-  after(:each) do
-    DatabaseCleaner.clean
-  end
+  before(:each) { DatabaseCleaner.start }
+  after(:each) { DatabaseCleaner.clean }
 end
 
 shared_context "db_clean_after" do
-  after(:all) do
-    DatabaseCleaner.clean_with(:truncation, { :except => %w(locations) })
-  end
+  after(:all) { DatabaseCleaner.clean_with(:truncation, { :except => %w(locations) }) }
 end
 
 shared_context "db_clean_all" do
-  before(:all) do
-    DatabaseCleaner.clean_with(:truncation, { :except => %w(locations) })
-  end
-
-  after(:all) do
-    DatabaseCleaner.clean_with(:truncation, { :except => %w(locations) })
-  end
+  before(:all) { DatabaseCleaner.clean_with(:truncation, { :except => %w(locations) }) }
+  after(:all) { DatabaseCleaner.clean_with(:truncation, { :except => %w(locations) }) }
 end
 
 shared_context "db_cleanup_each" do |ar_strategy = :truncation|
@@ -49,13 +32,8 @@ shared_context "db_cleanup_each" do |ar_strategy = :truncation|
     DatabaseCleaner.clean_with(:truncation, { :except => %w(locations) })
   end
 
-  after(:all) do
-    DatabaseCleaner.clean_with(:truncation, { :except => %w(locations) })
-  end
-
-  before(:each) do
-    DatabaseCleaner.start
-  end
+  after(:all) { DatabaseCleaner.clean_with(:truncation, { :except => %w(locations) }) }
+  before(:each) { DatabaseCleaner.start }
 
   after(:each) do
     Capybara.reset_sessions! if self.class.metadata[:js]

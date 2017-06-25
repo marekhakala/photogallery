@@ -6,8 +6,7 @@
       templateUrl: templateUrl,
       controller: ImageLoaderController,
       bindings: { resultDataUri: "&" },
-      transclude: true
-  });
+      transclude: true });
 
   templateUrl.$inject = ["spa.config.APP_CONFIG"];
   function templateUrl(APP_CONFIG) {

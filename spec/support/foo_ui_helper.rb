@@ -4,11 +4,12 @@ module FooUiHelper
 
   def create_foo foo_state
     visit "#{root_path}/#/foos" unless page.has_css?("h3", text: "Foos")
-    expect(page).to have_css("h3", text: "Foos")
+    expect(page).to have_css("h3", text:"Foos")
 
     within(:xpath, FOO_FORM_XPATH) do
       fill_in("name", with: foo_state[:name])
       expect(page).to have_field("name", with: foo_state[:name])
+
       click_button("Create Foo", disabled: false)
     end
 
@@ -26,11 +27,14 @@ module FooUiHelper
     within(:xpath, FOO_LIST_XPATH) do
       find("a", text: existing_name).click
     end
+
     within(:xpath, FOO_FORM_XPATH) do
       find_field("name", readonly: false, wait: 5)
       fill_in("name", with: new_name)
+
       click_button("Update Foo")
     end
+
     within(:xpath, FOO_LIST_XPATH) do
       expect(page).to have_css("li a", text: new_name)
     end

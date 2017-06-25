@@ -1,11 +1,13 @@
 require 'rails_helper'
 require 'support/foo_ui_helper.rb'
 
-RSpec.feature "ManageFoos", type: :feature, :js=>true do
+RSpec.feature "ManageFoos", type: :feature, js: true do
   include_context "db_cleanup_each"
   include FooUiHelper
-  FOO_FORM_XPATH = FooUiHelper::FOO_FORM_XPATH
+
   FOO_LIST_XPATH = FooUiHelper::FOO_LIST_XPATH
+  FOO_FORM_XPATH = FooUiHelper::FOO_FORM_XPATH
+
   let(:foo_state) { FactoryGirl.attributes_for(:foo) }
 
   feature "view existing Foos" do
@@ -22,7 +24,6 @@ RSpec.feature "ManageFoos", type: :feature, :js=>true do
     end
 
     scenario "when instances exist" do
-      visit "#{root_path}/#/" if foos
       visit "#{root_path}/#/foos" if foos
 
       within(:xpath, FOO_LIST_XPATH) do
@@ -40,9 +41,7 @@ RSpec.feature "ManageFoos", type: :feature, :js=>true do
   feature "add new Foo" do
     background(:each) do
       visit "#{root_path}/#/foos"
-
       expect(page).to have_css("h3", text: "Foos")
-      expect(page).to have_css("li", count: 0)
 
       within(:xpath,FOO_LIST_XPATH) do
         expect(page).to have_css("li", count: 0)
@@ -76,7 +75,7 @@ RSpec.feature "ManageFoos", type: :feature, :js=>true do
 
       within(:xpath,FOO_LIST_XPATH) do
         using_wait_time 5 do
-          expect(page).to have_xpath("//li", count: 1)
+          expect(page).to have_xpath(".//li", count: 1)
           expect(page).to have_content(foo_state[:name])
         end
       end
@@ -106,7 +105,7 @@ RSpec.feature "ManageFoos", type: :feature, :js=>true do
         expect(page).to have_no_css("li", text: new_name)
       end
 
-      update_foo(existing_name, new_name)
+      update_foo existing_name, new_name
 
       within(:xpath, FOO_LIST_XPATH) do
         expect(page).to have_css("li", count: 1)

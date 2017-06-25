@@ -1,8 +1,7 @@
 (function() {
   "use strict";
 
-  angular
-    .module("spa.foos")
+  angular.module("spa.foos")
     .directive("sdFoos", FoosDirective);
 
   FoosDirective.$inject = ["spa.config.APP_CONFIG"];
@@ -16,8 +15,7 @@
         controllerAs: "foosVM",
         restrict: "E",
         scope: {},
-        link: link
-    };
+        link: link };
     return directive;
 
     function link(scope, element, attrs) {

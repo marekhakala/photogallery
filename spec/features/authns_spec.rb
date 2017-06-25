@@ -13,6 +13,7 @@ RSpec.feature "Authns", type: :feature, js: true do
         expect(page).to have_no_css("#signup-form")
         user = User.where(email: user_props[:email]).first
         expect(user.created_at).to be > start_time
+
         sleep 0.5
       end
     end
@@ -24,37 +25,39 @@ RSpec.feature "Authns", type: :feature, js: true do
       end
 
       scenario "account not created and stays on page" do
-        dup_user = FactoryGirl.attributes_for(:user, email: user_props[:email])
-        signup dup_user, false
+        duplicate_user = FactoryGirl.attributes_for(:user, email: user_props[:email])
+        signup duplicate_user, false
 
         expect(User.where(email: user_props[:email], name: user_props[:name])).to exist
-        expect(User.where(email: dup_user[:email], name: dup_user[:name])).to_not exist
+        expect(User.where(email: duplicate_user[:email], name: duplicate_user[:name])).to_not exist
 
         expect(page).to have_css("#signup-form")
         expect(page).to have_button("Sign Up")
       end
 
       scenario "displays error messages" do
-        bad_props=FactoryGirl.attributes_for(:user, email: user_props[:email], password: "123")
-                            .merge(password_confirmation: "abc")
+        bad_props = FactoryGirl.attributes_for(:user, email: user_props[:email], password: "123")
+          .merge(password_confirmation: "abc")
         signup bad_props, false
 
-        expect(page).to have_css("#signup-form > span.invalid", text: "Password confirmation doesn't match Password")
+        expect(page).to have_css("#signup-form > span.invalid",
+            text: "Password confirmation doesn't match Password")
         expect(page).to have_css("#signup-form > span.invalid", text: "Password is too short")
-        expect(page).to have_css("#signup-form > span.invalid", text: "Email already in use")
-        expect(page).to have_css("#signup-email span.invalid", text: "already in use")
-        expect(page).to have_css("#signup-password span.invalid", text: "too short")
+        expect(page).to have_css("#signup-form > span.invalid", text: "Email has already been taken")
+
+        expect(page).to have_css("#signup-email span.invalid", text: "Has already been taken")
+        expect(page).to have_css("#signup-password span.invalid", text: "Is too short")
 
         within("#signup-password_confirmation") do
-          expect(page).to have_css("span.invalid", text: "doesn't match")
+          expect(page).to have_css("span.invalid", text: "Doesn't match password")
         end
       end
 
       scenario "clears error messages on page update" do
-        bad_props=FactoryGirl.attributes_for(:user, email: user_props[:email], password: "123")
-                            .merge(password_confirmation: "abc")
-
+        bad_props = FactoryGirl.attributes_for(:user, email: user_props[:email], password: "123")
+            .merge(password_confirmation: "abc")
         signup bad_props, false
+
         expect(page).to have_css("#signup-email span.invalid")
         expect(page).to have_css("#signup-password > span.invalid")
         expect(page).to have_css("#signup-password_confirmation > span.invalid")
@@ -76,11 +79,12 @@ RSpec.feature "Authns", type: :feature, js: true do
 
       scenario "bad email" do
         fillin_signup FactoryGirl.attributes_for(:user, email: "yadayadayada")
+
         expect(page).to have_css("input[name='signup-email'].ng-invalid-email")
       end
-
       scenario "missing password" do
         fillin_signup FactoryGirl.attributes_for(:user, password: nil)
+
         expect(page).to have_css("input[name='signup-password'].ng-invalid-required")
         expect(page).to have_css("input[name='signup-password_confirmation'].ng-invalid-required")
       end
@@ -91,6 +95,7 @@ RSpec.feature "Authns", type: :feature, js: true do
     scenario "shown login form" do
       visit root_path
       click_on("Login")
+
       expect(page).to have_no_css("#logout-form")
       expect(page).to have_css("#login-form")
     end
@@ -98,6 +103,7 @@ RSpec.feature "Authns", type: :feature, js: true do
 
   def checkme
     visit root_path + "#/authn"
+
     within("div#authn-check") do
       click_button("checkMe() says...")
     end
@@ -193,7 +199,7 @@ RSpec.feature "Authns", type: :feature, js: true do
 
       within ("div.checkme-user") do
         expect(page).to have_no_css("label", text: /#{user_props[:name]}/)
-        expect(page).to have_css("label", text: /Authorized users only/, wait: 5)
+        expect(page).to have_css("label", text: /You need to sign in or sign up before continuing/, wait: 5)
       end
     end
   end

@@ -1,5 +1,4 @@
 class ThingPolicy < ApplicationPolicy
-
   def index?
     true
   end
@@ -40,15 +39,31 @@ class ThingPolicy < ApplicationPolicy
     organizer_or_admin?
   end
 
+  def get_tags?
+    true
+  end
+
+  def add_tag?
+    organizer?
+  end
+
+  def update_tag?
+    organizer?
+  end
+
+  def remove_tag?
+    organizer_or_admin?
+  end
+
   class Scope < Scope
     def user_roles members_only = true, allow_admin = true
       include_admin = allow_admin && @user && @user.is_admin?
       member_join = members_only && !include_admin ? "join" : "left join"
-      joins_clause = [ "#{member_join} Roles r on r.mname='Thing'",
-                    "r.mid=Things.id",
-                    "r.user_id #{user_criteria}" ].join(" and ")
-      scope.select("Things.*, r.role_name")
-           .joins(joins_clause)
+
+      joins_clause = [ "#{member_join} Roles r on r.mname='Thing'", "r.mid=Things.id",
+                       "r.user_id #{user_criteria}" ].join(" and ")
+
+      scope.select("Things.*, r.role_name").joins(joins_clause)
            .tap { |s| s.where("r.role_name"=>[Role::ORGANIZER, Role::MEMBER]) if members_only }
     end
 

@@ -1,7 +1,5 @@
 (function() {
   "use strict";
 
-  angular.module("spa.foos", [
-      "ngResource"
-    ]);
+  angular.module("spa.foos", [ "ngResource" ]);
 })();

@@ -5,7 +5,7 @@
         ng-disabled="select_origin.$invalid" ng-click="$ctrl.lookupAddress()">Lookup</button>
   <label title="my-position" class="btn btn-default" ng-class="{'invalid' : $ctrl.myPositionError!=null }"
         ng-show="$ctrl.isCurrentLocationSupported()" ng-click="$ctrl.useCurrentLocation()">
-    {{ $ctrl.myPositionError==null ? 'My Position' : 'Position Unavail'}}
+    {{ $ctrl.myPositionError == null ? 'My Position' : 'Position Unavailable' }}
   </label>
 </form>
 <span class="search-criteria" ng-show="$ctrl.getOriginAddress()">

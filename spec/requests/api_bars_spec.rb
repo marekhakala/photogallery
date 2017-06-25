@@ -2,13 +2,14 @@ require 'rails_helper'
 
 RSpec.describe "Bar API", type: :request do
   include_context "db_cleanup_each"
+
   let(:user) { login signup(FactoryGirl.attributes_for(:user)) }
 
   context "caller requests list of Bars" do
     it_should_behave_like "resource index", :bar do
       let(:response_check) do
-        expect(payload.count).to eq(resources.count);
-        expect(payload.map { |f| f["name"] }).to eq(resources.map {|f| f[:name] })
+        expect(payload.count).to eq(resources.count)
+        expect(payload.map { |f| f["name"] }).to eq(resources.map{ |f| f[:name] })
       end
     end
   end
@@ -26,21 +27,20 @@ RSpec.describe "Bar API", type: :request do
 
   context "create a new Bar" do
     it_should_behave_like "create resource", :bar do
-      let(:response_check) {
-        pp payload
+      let(:response_check) do
         expect(payload).to have_key("name")
         expect(payload["name"]).to eq(resource_state[:name])
         expect(Bar.find(resource_id).name).to eq(resource_state[:name])
-      }
+      end
     end
   end
 
   context "existing Bar" do
     it_should_behave_like "modifiable resource", :bar do
-      let(:update_check) {
+      let(:update_check) do
         expect(resource["name"]).to_not eq(new_state[:name])
         expect(Bar.find(resource["id"]).name).to eq(new_state[:name])
-      }
+      end
     end
   end
 end

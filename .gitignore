@@ -21,6 +21,7 @@ public/assets/**
 
 # Secret token
 config/initializers/secret_token.rb
+config/application.yml
 config/secrets.yml
 
 # these should all be checked in to normalise the environment:

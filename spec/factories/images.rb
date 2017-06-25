@@ -9,8 +9,17 @@ FactoryGirl.define do
       image.image_content = FactoryGirl.build(:image_content, image.image_content) if image.image_content
     end
 
-    after(:create) do |image|
-      ImageContentCreator.new(image).build_contents.save! if image.image_content
+    transient do
+      sizes 5
+    end
+
+    after(:create) do |image, props|
+      if props.sizes == 1
+        image.image_content.image_id = image.id
+        image.image_content.save!
+      elsif props.sizes > 1
+        ImageContentCreator.new(image).build_contents.save! if image.image_content
+      end
     end
 
     trait :with_caption do
@@ -19,8 +28,8 @@ FactoryGirl.define do
 
     trait :with_roles do
       after(:create) do |image|
-        Role.create(role_name: Role::ORGANIZER, mname: Image.name,
-          mid: image.id, user_id: image.creator_id)
+        Role.create(role_name: Role::ORGANIZER,
+          mname: Image.name, mid: image.id, user_id: image.creator_id)
       end
     end
   end

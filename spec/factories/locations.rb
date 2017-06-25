@@ -1,15 +1,15 @@
 FactoryGirl.define do
   factory :point do
     transient do
-      lng { Faker::Number.negative(-77.0,-76.0).round(6) }
-      lat { Faker::Number.positive(38.7,39.7).round(6) }
+      lng { Faker::Number.negative(-77.0, -76.0).round(6) }
+      lat { Faker::Number.positive(38.7, 39.7).round(6) }
     end
 
     initialize_with { Point.new(lng, lat) }
 
     trait :jhu do
-      lng -76.6200464
-      lat  39.3304957
+      lng -76.6208832
+      lat 39.3262044
     end
   end
 
@@ -36,11 +36,8 @@ FactoryGirl.define do
   factory :location do
     address { FactoryGirl.build(:postal_address) }
     position { FactoryGirl.build(:point) }
-
-    formatted_address { street_no = address.street_address.match(/^(\d+)/)[1]
-      "#{street_no} N Charles St, Baltimore, MD 21218, USA" }
-
-    initialize_with { Location.new(formatted_address,position,address) }
+    formatted_address { "Malone Hall, 3400 N Charles St, Baltimore, MD 21218, USA" }
+    initialize_with { Location.new(formatted_address, position, address) }
 
     trait :jhu do
       address { FactoryGirl.build(:postal_address, :jhu) }

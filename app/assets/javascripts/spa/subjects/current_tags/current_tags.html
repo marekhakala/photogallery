@@ -1,0 +1,5 @@
+<ul class="items">
+  <li ng-repeat="tag in $ctrl.tags" ng-class="tag == $ctrl.selected ? 'selected' : ''">
+    <a ng-click="$ctrl.select(tag)">{{ tag.name }}</a>
+  </li>
+</ul>

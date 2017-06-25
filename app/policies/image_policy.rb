@@ -25,9 +25,8 @@ class ImagePolicy < ApplicationPolicy
 
   class Scope < Scope
     def user_roles
-      joins_clause = [ "left join Roles r on r.mname='Image'",
-                    "r.mid=Images.id",
-                    "r.user_id #{user_criteria}" ].join(" and ")
+      joins_clause = [ "left join Roles r on r.mname='Image'", "r.mid=Images.id",
+                      "r.user_id #{user_criteria}" ].join(" and ")
       scope.select("Images.*, r.role_name").joins(joins_clause)
     end
 

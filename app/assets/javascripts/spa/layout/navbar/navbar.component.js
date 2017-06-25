@@ -8,7 +8,6 @@
     });
 
   templateUrl.$inject = ["spa.config.APP_CONFIG"];
-
   function templateUrl(APP_CONFIG) {
     return APP_CONFIG.navbar_html;
   }

@@ -2,7 +2,7 @@ require 'rails_helper'
 require_relative '../support/image_content_helper.rb'
 require_relative '../support/subjects_ui_helper.rb'
 
-RSpec.feature "ImageContents", type: :feature, js:true do
+RSpec.feature "ImageContents", type: :feature, js: true do
   include_context "db_cleanup"
   include ImageContentHelper
   include SubjectsUiHelper
@@ -17,6 +17,7 @@ RSpec.feature "ImageContents", type: :feature, js:true do
 
   context "display existing image content" do
     include_context "db_clean_after"
+
     let(:thing) { @thing }
     let(:image) { thing.thing_images.first.image }
     let(:images) { Image.all }
@@ -25,16 +26,18 @@ RSpec.feature "ImageContents", type: :feature, js:true do
       @thing = Thing.first
 
       unless @thing
-        @thing = FactoryGirl.create(:thing, :with_roles,
-            :with_image, originator_id: organizer[:id], image_count: 3)
+        @thing = FactoryGirl.create(:thing, :with_roles, :with_image,
+                                    originator_id: organizer[:id], image_count: 3)
       else
         apply_organizer(organizer, @thing)
       end
+
       login organizer
     end
 
     it "can display thumbnails in image list" do
       visit_images
+
       within("sd-image-selector .image-list") do
         expect(page).to have_css("li", count: images.count)
         img = find(".image_id", text: image.id, visible: false).find(:xpath, "..")
@@ -89,7 +92,8 @@ RSpec.feature "ImageContents", type: :feature, js:true do
     it "can select file" do
       within("sd-image-editor .image-form") do
         expect(page).to_not have_css(".image-existing img")
-        attach_file("image-file", image_filepath)
+        attach_file("image-file", image_filepath )
+
         expect(page).to_not have_field("image-file")
         expect(page).to have_css("sd-image-editor .image-select img.image-preview")
       end
@@ -106,19 +110,18 @@ RSpec.feature "ImageContents", type: :feature, js:true do
         attach_file("image-file", path)
 
         expect(page).to have_button("Create Image", disabled: true)
-        expect(page).to have_css(".image-select span.invalid", text: "image size is too large")
+        expect(page).to have_css(".image-select span.invalid",
+          text: "image size is too large")
         expect(page).to have_css(".image-select img.image-preview")
       end
     end
 
     it "can upload file" do
       within("sd-image-editor .image-form") do
-        attach_file("image-file", image_filepath )
+        attach_file("image-file", image_filepath)
         fill_in("image-caption", with: image_props[:caption])
 
-        if (page.has_css?("span.invalid", text: /.+/))
-          fail(page.find("span.invalid", text: /.+/).text)
-        end
+        fail(page.find("span.invalid", text: /.+/).text) if (page.has_css?("span.invalid", text: /.+/))
 
         using_wait_time 10 do
           click_button("Create Image")
@@ -132,6 +135,7 @@ RSpec.feature "ImageContents", type: :feature, js:true do
       end
 
       visit_images
+
       within(find(".image-list a", text: /^#{image_props[:caption]}/)) do
         expect(page).to have_css("img[src*='content?width=50']")
       end
@@ -141,7 +145,6 @@ RSpec.feature "ImageContents", type: :feature, js:true do
       within("sd-image-editor .image-form") do
         attach_file("image-file", image_filepath)
         expect(page).to have_css(".image-select img.image-preview")
-
         click_button("Clear Image")
 
         expect(page).to have_no_css(".image-select img.image-preview")
@@ -161,7 +164,8 @@ RSpec.feature "ImageContents", type: :feature, js:true do
 
     it "shows original and preview image" do
       within("sd-image-editor .image-form") do
-        attach_file("image-file", image_filepath )
+        attach_file("image-file", image_filepath)
+
         expect(page).to have_css(".image-select img.image-preview")
         expect(page).to have_css(".image-select .crop-area canvas")
       end
@@ -173,6 +177,7 @@ RSpec.feature "ImageContents", type: :feature, js:true do
       within("sd-image-editor .image-form") do
         attach_file("image-file", image_filepath)
         fill_in("image-caption", with: image_props[:caption])
+
         expect(page).to have_css(".image-select img.image-preview", wait: 5)
         expect(page).to have_button("Create Image", disabled: false)
         click_button("Create Image")
@@ -187,6 +192,7 @@ RSpec.feature "ImageContents", type: :feature, js:true do
       contents = ImageContent.where(original: true).not.in(_id: existing_content)
       expect(contents.size).to eq(1)
       content = contents.first
+
       ratio = content.width.to_f / content.height.to_f
       expect(ratio.round(1)).to eq(1.5)
     end

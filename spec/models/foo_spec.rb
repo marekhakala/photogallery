@@ -1,8 +1,5 @@
 require 'rails_helper'
 
-require 'mongo'
-#Mongo::Logger.logger.level = ::Logger::DEBUG
-
 describe Foo, type: :model do
   include_context "db_cleanup", :transaction
 
@@ -20,6 +17,7 @@ describe Foo, type: :model do
 
   context "created Foo (subject)" do
     subject { @foo }
+
     it { is_expected.to be_persisted }
     it { expect(subject.name).to eq("test") }
     it { expect(Foo.find(subject.id)).to_not be_nil }

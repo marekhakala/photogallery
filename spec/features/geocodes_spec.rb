@@ -22,18 +22,21 @@ RSpec.feature "Geocodes", type: :feature, js: true do
       visit_images
 
       typed_text = "#{address.street_address}, #{address.city}"
+
       within("sd-image-editor .image-form .image-geocode") do
         fill_in("image-address", with: typed_text)
         expect(page).to have_field("image-address", with: typed_text)
       end
 
       find("sd-image-editor").click
+
       using_wait_time 10 do
-        expect(page).to have_css("sd-image-editor .image-location span.lng", text:/.+/)
-        expect(page).to have_css("sd-image-editor .image-location span.lat", text:/.+/)
+        expect(page).to have_css("sd-image-editor .image-location span.lng", text: /.+/)
+        expect(page).to have_css("sd-image-editor .image-location span.lat", text: /.+/)
       end
 
-      expect(cloc = CachedLocation.by_address(typed_text).first).to_not be_nil
+      expect(cloc=CachedLocation.by_address(typed_text).first).to_not be_nil
+
       within("sd-image-editor .image-form") do
         expect(page).to have_css(".image-geocode .formatted_address", text: cloc.location[:formatted_address])
         expect(page).to have_css(".image-location span.lng", text: cloc.location[:position][:lng])
@@ -53,14 +56,14 @@ RSpec.feature "Geocodes", type: :feature, js: true do
       typed_text = "#{address.street_address}, #{address.city}"
 
       within(".image-geocode") do
-        fill_in("image-address", with:typed_text)
+        fill_in("image-address", with: typed_text)
       end
 
       find("sd-image-editor").click
 
       using_wait_time 10 do
-        expect(page).to have_css(".image-location span.lng", text:/.+/)
-        expect(page).to have_css(".image-location span.lat", text:/.+/)
+        expect(page).to have_css(".image-location span.lng", text: /.+/)
+        expect(page).to have_css(".image-location span.lat", text: /.+/)
       end
 
       click_button("Update Image")
@@ -69,11 +72,12 @@ RSpec.feature "Geocodes", type: :feature, js: true do
       logout
       Capybara.reset_sessions!
       visit_image image
+      expect(cloc=CachedLocation.by_address(typed_text).first).to_not be_nil
 
-      expect(cloc = CachedLocation.by_address(typed_text).first).to_not be_nil
       using_wait_time 5 do
         expect(page).to have_css(".image-location span.lng", text: cloc.location[:position][:lng])
         expect(page).to have_css(".image-location span.lat", text: cloc.location[:position][:lat])
+      end
     end
   end
 
@@ -99,7 +103,7 @@ RSpec.feature "Geocodes", type: :feature, js: true do
 
         using_wait_time 5 do
           expect(page).to have_css("span.current-origin", text: /.+/)
-          expect(cloc = CachedLocation.by_address(search_address).first).to_not be_nil
+          expect(cloc=CachedLocation.by_address(search_address).first).to_not be_nil
           resolvedAddress = cloc.location[:formatted_address]
           expect(page).to have_css("span.current-origin", text: resolvedAddress)
         end
@@ -107,7 +111,7 @@ RSpec.feature "Geocodes", type: :feature, js: true do
     end
 
     it "identifies origin by current location" do
-      if Capybara.javascript_driver == :poltergeist && page.has_no_css?("button[name='my-position']")
+      if Capybara.javascript_driver == :poltergeist and page.has_no_css?("button[name='my-position']")
         pending "poltergeist does not support $window.navigator"
       end
 
@@ -126,7 +130,7 @@ RSpec.feature "Geocodes", type: :feature, js: true do
       click_button("lookup-address")
 
       using_wait_time 10 do
-        expect(page).to have_css("span.current-origin", text: /.+/)
+         expect(page).to have_css("span.current-origin", text: /.+/)
       end
 
       expect(page).to have_css("form[name='distance_limit']")

@@ -50,6 +50,7 @@
         return !item.id ? this.canCreate() : (Authz.isMember(item) || Authz.isAdmin());
       }
     };
+    
     return BasePolicy;
   }
 })();

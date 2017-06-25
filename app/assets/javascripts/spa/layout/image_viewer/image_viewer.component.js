@@ -14,7 +14,7 @@
     return APP_CONFIG.image_viewer_html;
   }
 
-  ImageViewerController.$inject = ["$scope", "$element","spa.layout.ImageQuerySize"];
+  ImageViewerController.$inject = ["$scope", "$element", "spa.layout.ImageQuerySize"];
   function ImageViewerController($scope, $element,ImageQuerySize) {
     var sizing = null;
     var vm = this;
@@ -87,7 +87,7 @@
       }
 
       if (originalValue !== vm.currentIndex) {
-        vm.indexChanged({index:vm.currentIndex});
+        vm.indexChanged({ index: vm.currentIndex });
       }
     }
 
@@ -105,7 +105,7 @@
     }
 
     function imageId(object) {
-      if (!object) { return null }
+      if (!object) { return null; }
       var id = object.image_id ? object.image_id : object.id;
       return id;
     }

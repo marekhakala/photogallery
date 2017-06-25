@@ -5,11 +5,11 @@
     .service("spa.authz.Authz", Authz);
 
   Authz.$inject = [ "$rootScope", "$q",
-                    "spa.authn.Authn",
-                    "spa.authn.whoAmI" ];
+      "spa.authn.Authn", "spa.authn.whoAmI" ];
 
   function Authz($rootScope, $q, Authn, whoAmI) {
     var service = this;
+
     service.user = null;
     service.userPromise = null;
     service.admin = false;
@@ -32,7 +32,7 @@
     }
 
     function newUser() {
-      var deferred=$q.defer();
+      var deferred = $q.defer();
       service.userPromise = deferred.promise;
       service.user = null;
 
@@ -60,7 +60,7 @@
 
     function getAuthorizedUser() {
       var deferred = $q.defer();
-      var promise=service.userPromise;
+      var promise = service.userPromise;
 
       if (promise) {
         promise.then(
@@ -78,7 +78,7 @@
     }
 
     function isAuthenticated() {
-      return getAuthorizedUserId()!=null;
+      return getAuthorizedUserId() != null;
     }
 
     function isAdmin() {
@@ -99,9 +99,9 @@
 
     function hasRole(user_roles, role) {
       if (role) {
-        return !user_roles ? false : user_roles.indexOf(role) >=0;
+        return !user_roles ? false : user_roles.indexOf(role) >= 0;
       } else {
-        return !user_roles ? true : user_roles.length==0
+        return !user_roles ? true : user_roles.length == 0;
       }
     }
   }

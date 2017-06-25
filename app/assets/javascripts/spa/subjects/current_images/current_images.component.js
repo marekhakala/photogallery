@@ -22,8 +22,7 @@
     return APP_CONFIG.current_image_viewer_html;
   }
 
-  CurrentImagesController.$inject = ["$scope",
-                                    "spa.subjects.currentSubjects"];
+  CurrentImagesController.$inject = ["$scope", "spa.subjects.currentSubjects"];
   function CurrentImagesController($scope, currentSubjects) {
     var vm = this;
     vm.imageClicked = imageClicked;
@@ -46,8 +45,7 @@
     }
   }
 
-  CurrentImageViewerController.$inject = ["$scope",
-                                          "spa.subjects.currentSubjects"];
+  CurrentImageViewerController.$inject = ["$scope", "spa.subjects.currentSubjects"];
   function CurrentImageViewerController($scope, currentSubjects) {
     var vm = this;
     vm.viewerIndexChanged = viewerIndexChanged;

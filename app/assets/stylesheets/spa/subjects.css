@@ -69,3 +69,41 @@ div.thing-marker-info img,
 div.image-marker-info img {
   width: 200px;
 }
+
+.admin-zone {
+  padding: 12px;
+  margin-bottom: 12px;
+  background-color: #ffff55;
+  border: solid 1px #e7e7e7;
+}
+
+.admin-zone h3 {
+  margin-top: 0;
+}
+
+.tag-box {
+  margin-bottom: 24px;
+}
+
+.tag-box .content {
+  background-color: #f8f8f8;
+}
+
+.tag-box .title {
+  width: 100%;
+  padding: 0 12px;
+  font-size: 2em;
+  color: #ffffff;
+  background-color: rgba(0, 0, 0, 0.7);
+}
+
+.tag-box .thing-list {
+  height: 200px;
+  padding: 12px 0;
+  overflow: auto;
+}
+
+.tag-box .link-things {
+  padding: 7px;
+  border-top: solid 1px #e7e7e7;
+}

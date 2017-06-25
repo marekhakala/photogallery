@@ -1,9 +1,13 @@
 class ApplicationPolicy
   attr_reader :user, :record
 
-  def initialize(user, record)
+  def initialize user, record
     @user = user
     @record = record
+  end
+
+  def admin?
+    @user.has_role([Role::ADMIN])
   end
 
   def organizer_or_admin?
@@ -31,7 +35,7 @@ class ApplicationPolicy
   end
 
   def show?
-    scope.where(:id => record.id).exists?
+    scope.where(id: record.id).exists?
   end
 
   def create?
@@ -61,7 +65,7 @@ class ApplicationPolicy
   class Scope
     attr_reader :user, :scope
 
-    def initialize(user, scope)
+    def initialize user, scope
       @user = user
       @scope = scope
     end
@@ -79,7 +83,7 @@ class ApplicationPolicy
   def self.merge scope
     prev = nil
     scope.select { |r|
-      if prev && prev.id == r.id
+      if prev and prev.id == r.id
         prev.user_roles << r.role_name if r.role_name
         false
       else
