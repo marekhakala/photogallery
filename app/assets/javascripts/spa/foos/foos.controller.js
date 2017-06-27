@@ -46,14 +46,14 @@
 
     function update() {
       vm.foo.$update()
-        .then(function(response) {}).catch(handleError)
+        .then(function(response) {}).catch(handleError);
     }
 
     function remove() {
       vm.foo.$delete().then(function(response) {
         removeElement(vm.foos, vm.foo);
         newFoo();
-      }).catch(handleError)
+      }).catch(handleError);
     }
 
     function removeElement(elements, element) {

@@ -4,19 +4,20 @@
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{ pageTitle }}</title>
     <%= favicon_link_tag "favicon.ico" %>
     <%= stylesheet_link_tag "spa", media: "all" %>
     <%= javascript_include_tag "spa" %>
   </head>
   <body>
-    <div id="main-menubar" class="container-fluid fullsize">
-      <sd-navbar></sd-navbar>
-    </div>
-    <div id="display-area" class="container-fluid">
-      <div ui-view></div>
-
-      <script async defer src="https://maps.googleapis.com/maps/api/js?key=<%= ENV['GMAPS_JSMAPS_KEY'] %>">
-      </script>
+    <div class="wrapper">
+      <div class="content-wrapper">
+        <sd-navbar></sd-navbar>
+        <div id="display-area">
+          <div ui-view></div>
+          <script async defer src="https://maps.googleapis.com/maps/api/js?key=<%= ENV['GMAPS_JSMAPS_KEY'] %>"></script>
+        </div>
+      </div>
     </div>
   </body>
 </html>

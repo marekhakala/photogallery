@@ -27,8 +27,32 @@
       });
     }
 
+    function createUserProfile(data) {
+      return { "configName": "default",
+       "email": data.email, "id": data.id,
+       "image": null, "name": data.name,
+       "nickname": null, "provider": "email",
+       "signedIn": true, "uid": data.uid };
+    }
+
     function signup(registration) {
-      return $auth.submitRegistration(registration);
+      console.log("signup", registration.email);
+      var result = $auth.submitRegistration(registration);
+      var deferred = $q.defer();
+
+      result.then(function(response) {
+          console.log("signup complete", response);
+          var userProfile = createUserProfile(response.data.data);
+
+          service.user = userProfile;
+          deferred.resolve(response);
+        },
+        function(response) {
+          console.log("signup failure", response);
+          deferred.reject(response);
+        });
+
+      return result;
     }
 
     function isAuthenticated() {

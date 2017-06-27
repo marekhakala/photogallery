@@ -3,6 +3,15 @@
 
   angular.module("spa.config", [])
     .constant("spa.config.APP_CONFIG", {
+      page_title_base: "PhotoGallery",
+      page_title_subjects: "Subjects",
+      page_title_sign_up: "Sign Up",
+      page_title_authn: "Authn",
+      page_title_images: "Images",
+      page_title_things: "Things",
+      page_title_tags: "Tags",
+      page_title_foos: "Foos",
+
       server_url: "<%= ENV['RAILS_API_URL'] %>",
       default_position: { "lng": -76.61183685064316, "lat": 39.28583496489344 },
       main_page_html: "<%= asset_path('spa/pages/main.html') %>",

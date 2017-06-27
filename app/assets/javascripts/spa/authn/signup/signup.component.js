@@ -14,9 +14,14 @@
     var vm = this;
     vm.signupForm = {}
     vm.signup = signup;
+    vm.getCurrentUser = Authn.getCurrentUser;
+    vm.getCurrentUserName = Authn.getCurrentUserName;
 
     vm.$onInit = function() {
       console.log("SignupController",$scope);
+    }
+    vm.$postLink = function() {
+      vm.dropdown = $("#login-dropdown");
     }
     return;
 
@@ -28,6 +33,7 @@
         function(response) {
           vm.id = response.data.data.id;
           console.log("signup complete", response.data, vm);
+          vm.dropdown.removeClass("open");
           $state.go("home");
         },
         function(response) {

@@ -12,7 +12,7 @@ gem 'mini_magick', '~> 4.5'
 gem 'geokit-rails', '~> 2.2'
 gem 'devise_token_auth', '~> 0.1'
 
-gem 'fontawesome-rails', '~> 4.0'
+gem 'font-awesome-rails', '~> 4.7'
 gem 'coffee-rails', '~> 4.1'
 gem 'jquery-rails', '~> 4.2'
 gem 'sass-rails', '~> 5.0'
