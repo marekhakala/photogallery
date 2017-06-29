@@ -2,84 +2,121 @@
   <span class="image_id id">{{ $ctrl.item.id }}</span>
   <span class="invalid">{{ $ctrl.item.errors.full_messages }}</span>
 
-  <div class="image-content row col-lg-12">
+  <div class="image-content row form-group">
     <label class="col-xs-3"></label>
     <div class="col-xs-12 col-sm-9 image-rendering">
       <div class="image-existing">
         <img class="img-responsive img-rounded" style="width: 250px"
           ng-src="{{ $ctrl.item.content_url }}?width=250" ng-if="$ctrl.item.content_url" />
       </div>
+
       <sd-image-loader class="image-select" result-data-uri="$ctrl.setImageContent(dataUri)"
         ng-if="!$ctrl.item.id && $ctrl.authz.canCreate">
-        <span class="invalid" ng-show="imageform['image-file'].$error.maxSize">image size is too large (max=10MB)</span>
+        <div class="alert alert-danger" ng-show="imageform['image-file'].$error.maxSize">
+          <span class="invalid">image size is too large (max=10MB)</span>
+        </div>
       </sd-image-loader>
-      <span class="invalid">{{ $ctrl.item.errors.content_type }}</span>
-      <span class="invalid">{{ $ctrl.item.errors.content }}</span>
+
+      <div class="alert alert-danger" ng-show="$ctrl.item.errors.content_type != null || $ctrl.item.errors.content != null">
+        <span class="invalid">{{ $ctrl.item.errors.content_type }}</span>
+        <span class="invalid">{{ $ctrl.item.errors.content }}</span>
+      </div>
     </div>
   </div>
 
-  <div class="image-caption row col-lg-12">
-    <label class="col-xs-3">Caption:</label>
-    <input class="col-xs-9" name="image-caption" ng-model="$ctrl.item.caption"
-           ng-readonly="!$ctrl.authz.canUpdate" maxlength="80" pattern=".{3,}"
-           title="3 character minimum for Caption" />
-    <span class="invalid">{{ $ctrl.item.errors.name }}</span>
-  </div>
-  <div class="image-things row col-lg-12" ng-show="$ctrl.item.id">
-    <label class="col-xs-3">Related Things:</label>
-    <ul class="image-things col-xs-9">
-      <li ng-repeat="ti in $ctrl.things | orderBy:'priority'">
-        <a data-ui-sref="things({id:ti.thing_id})">
-          <span class="id thing_id">{{ ti.thing_id }}</span>
-          {{ ti.thing_name }}
-        </a>
-      </li>
-    </ul>
-    <span class="invalid">{{ $ctrl.item.errors.thing_images }}</span>
-  </div>
-
-  <div class="image-location row col-lg-12">
-    <label class="col-xs-3">Position:</label>
-    <div class="col-sm-9 col-xs-12" ng-show="$ctrl.item.position">
-      <label>lng: </label><span class="lng">{{ $ctrl.item.position.lng }}</span>
-      <label>lat: </label><span class="lat">{{ $ctrl.item.position.lat }}</span>
+  <div class="row form-group">
+    <div class="col-lg-3 col-md-3 col-xs-3">
+      <label>Caption</label>
+    </div>
+    <div class="col-lg-9 col-md-9 col-xs-9">
+      <input class="form-control" name="image-caption" ng-model="$ctrl.item.caption"
+             ng-readonly="!$ctrl.authz.canUpdate" maxlength="80" pattern=".{3,}"
+             title="3 character minimum for Caption" />
+      <div class="alert alert-danger" ng-show="$ctrl.item.errors.name != null">
+        <span class="invalid">{{ $ctrl.item.errors.name | capitalize }}</span>
+      </div>
     </div>
   </div>
 
-  <div class="image-geocode row col-lg-12">
-    <label class="col-xs-3" ng-show="$ctrl.authz.canUpdate">Use Address:</label>
-    <input class="col-xs-9" name="image-address" data-ng-model="$ctrl.address"
+  <div class="row form-group">
+    <div class="col-lg-3 col-md-3 col-xs-3">
+      <label>Related Things</label>
+    </div>
+    <div class="col-lg-9 col-md-9 col-xs-9">
+      <ul class="image-things">
+        <li ng-repeat="ti in $ctrl.things | orderBy:'priority'">
+          <a data-ui-sref="things({id:ti.thing_id})">
+            <span class="id thing_id">{{ ti.thing_id }}</span>
+            {{ ti.thing_name }}
+          </a>
+        </li>
+      </ul>
+      <div class="alert alert-danger" ng-show="$ctrl.item.errors.thing_images != null">
+        <span class="invalid">{{ $ctrl.item.errors.thing_images | capitalize }}</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="row form-group">
+    <div class="col-lg-3 col-md-3 col-xs-3">
+      <label>Position</label>
+    </div>
+    <div class="col-lg-9 col-md-9 col-xs-9">
+      <div ng-show="$ctrl.item.position">
+        <label>LNG </label>&nbsp;<span class="lng">{{ $ctrl.item.position.lng }}</span>
+        <label>, LAT </label>&nbsp;<span class="lat">{{ $ctrl.item.position.lat }}</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="row form-group">
+    <div class="col-lg-3 col-md-3 col-xs-3">
+      <label>Use Address</label>
+    </div>
+    <div class="col-lg-9 col-md-9 col-xs-9">
+      <input class="form-control" name="image-address" data-ng-model="$ctrl.address"
         ng-show="$ctrl.authz.canUpdate" ng-blur="$ctrl.locationByAddress($ctrl.address)" />
-    <label class="col-xs-3"></label>
-    <div class="formatted_address">{{ $ctrl.location.formatted_address }}</div>
-    <span class="invalid">{{ $ctrl.location.errors }}</span>
+      <div class="formatted_address">{{ $ctrl.location.formatted_address }}</div>
+
+      <div class="alert alert-danger" ng-show="$ctrl.location.errors != null">
+        <span class="invalid">{{ $ctrl.location.errors }}</span>
+      </div>
+    </div>
   </div>
 
   <div class="linkable-things row col-lg-12" ng-show="$ctrl.linkable_things.length > 0 && $ctrl.authz.authenticated">
-    <label class="col-xs-3">Linkable Things:</label>
+    <label class="col-xs-3">Linkable Things</label>
     <div class="link-things" class="col-xs-9">
       <select name="linkable-things" ng-model="$ctrl.selected_linkables" multiple>
         <option ng-repeat="thing in $ctrl.linkable_things | orderBy:'name'" value="{{thing.id}}">{{ thing.name }}</option>
       </select>
     </div>
-    <span class="invalid">{{ $ctrl.item.errors.linkable_things }}</span>
+
+    <div class="alert alert-danger" ng-show="$ctrl.item.errors.linkable_things != null">
+      <span class="invalid">{{ $ctrl.item.errors.linkable_things }}</span>
+    </div>
   </div>
+
   <div class="image-controls">
     <span ng-show="$ctrl.authz.authenticated">
-      <button name="image-create" ng-show="!$ctrl.item.id && $ctrl.authz.canCreate" type="submit"
+      <hr />
+      <button class="btn btn-default btn-block" name="image-create" ng-show="!$ctrl.item.id && $ctrl.authz.canCreate" type="submit"
               ng-disabled="imageform.$invalid || !$ctrl.item.image_content.content" ng-click="$ctrl.create()">
               Create Image
       </button>
+      <br />
       <span ng-show="$ctrl.item.id">
-        <button name="image-update" type="submit" ng-show="$ctrl.authz.canUpdate"
+        <button class="btn btn-default btn-block" name="image-update" type="submit" ng-show="$ctrl.authz.canUpdate"
                 ng-disabled="!imageform.$dirty" ng-click="$ctrl.update()">Update Image</button>
-        <button name="image-update" type="submit" ng-show="!$ctrl.authz.canUpdate"
-                ng-disabled="$ctrl.selected_linkables.length==0" ng-click="$ctrl.linkThings()">Link to Things</button>
-        <button name="image-delete" type="submit" ng-show="$ctrl.authz.canDelete"
+        <button class="btn btn-default btn-block" name="image-update" type="submit" ng-show="!$ctrl.authz.canUpdate"
+                ng-disabled="$ctrl.selected_linkables.length == 0" ng-click="$ctrl.linkThings()">Link to Things</button>
+        <button class="btn btn-default btn-block" name="image-delete" type="submit" ng-show="$ctrl.authz.canDelete"
                 ng-click="$ctrl.remove()">Delete Image</button>
+        <a ui-sref="images({id: null})" class="btn btn-default btn-block">Back to Images</a>
       </span>
     </span>
-    <button name="image-clear" type="submit" ng-show="$ctrl.item.id || imageform.$dirty"
+    <button class="btn btn-default btn-block" name="image-clear" type="submit" ng-show="$ctrl.item.id || imageform.$dirty"
             ng-click="$ctrl.clear()">Clear Image</button>
+    <hr />
   </div>
 </form>

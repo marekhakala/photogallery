@@ -1,5 +1,5 @@
 body {
-  background-color: #d2b48c;
+  background-color: #CFD8DC;
  }
 
 form .invalid {
@@ -13,6 +13,12 @@ form .invalid {
 .fullsize {
   padding-right: 0px;
   padding-left: 0px;
+}
+
+.thing-info {
+  padding-left: 15px;
+  padding-right: 15px;
+  padding-top: 10px;
 }
 
 #main-menubar nav.navbar {
@@ -55,7 +61,7 @@ div.areas-right {
 
 div.area-pane {
   position: relative;
-  border: 1px solid black;
+  border: 1px solid #BDBDBD;
 }
 div.area-pane input[type='checkbox'] {
   position: absolute;
@@ -73,7 +79,7 @@ div.area-pane.expanded div.tab-content {
 
 div.area-pane div.tab-pane ul.items {
   margin-top: 5px;
-  padding-left: 5px;
+  padding-left: 0px;
 }
 
 div.area-pane div.tab-pane ul.items span.id {
@@ -91,7 +97,43 @@ div.area-pane.expanded div.tab-pane ul.items img {
 div.area-pane div.tab-pane ul.items li.selected {
   font-size: 1.2em;
   font-weight: bold;
-  background-color: #e0e0d1;
+  background-color: #B0BEC5;
+}
+
+.tab-label {
+  background-color: #B0BEC5;
+  padding: 5px;
+  margin-bottom: 10px;
+}
+
+.signup-form {
+  padding-left: 50px;
+  padding-right: 50px;
+}
+
+.signup-row {
+  margin-bottom: 0px !important;
+}
+
+.authn-id-check-area {
+  padding-left: 15px;
+  padding-right: 15px;
+}
+
+.images-item {
+  margin-top: 5px;
+  margin-bottom: 5px;
+  margin-left: 5px;
+}
+
+.nav-pills > li.active > a {
+  color: #FFFFFF;
+  background-color: #263238;
+}
+
+.nav-pills > li.active > a:hover {
+  color: #FFFFFF;
+  background-color: #37474F;
 }
 
 div.areas-pane > ul.tab-label li a {
@@ -120,16 +162,22 @@ img.image-preview {
   display: inline-block;
   width: 300px;
   height: 200px;
-  margin: 10px;
+  margin-left: 0px !important;
+  margin-bottom: 10px;
+  border: solid 1px #37474F;
+  /* margin: 10px; */
 }
 
 .crop-area {
   position: relative;
-  display:block;
+  /* display:block; */
   width:300px;
-  height:350px;
-  margin: 10px;
+  height:200px;
+  /* margin-left: 10px; */
+  margin-right: 10px;
+  margin-bottom: 10px;
   overflow: visible;
+  float: left;
 }
 
 sd-image-viewer img {
@@ -189,6 +237,26 @@ sd-image-viewer .glyphicon-chevron-right {
   margin-top: 7px;
   margin-left: 5px;
   margin-right: 5px;
+}
+
+.image-list-item {
+  width: 50px;
+  height: 33px;
+  border: solid 1px #37474F;
+}
+
+.btn-authn-check {
+  background-color: #263238;
+}
+
+.btn-authn-check:hover {
+  color: #FFFFFF;
+  background-color: #37474F;
+}
+
+.btn-authn-check:active {
+  color: #FFFFFF;
+  background-color: #37474F;
 }
 
 /* Poltergeist testing */
@@ -279,8 +347,9 @@ sd-image-viewer .glyphicon-chevron-right {
 
   .crop-area {
     margin: 0px;
-    margin-left: auto;
-    margin-right: auto
+    margin-right: 10px;
+    margin-bottom: 10px;
+    border: solid 1px #37474F;
   }
 }
 

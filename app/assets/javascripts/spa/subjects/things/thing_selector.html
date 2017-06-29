@@ -1,6 +1,6 @@
 <div class="thing-list" ng-show="$ctrl.authz.canQuery">
-  <ul>
-    <li ng-repeat="item in $ctrl.items | orderBy:'name'">
+  <ul class="list-group">
+    <li class="list-group-item" ng-repeat="item in $ctrl.items | orderBy:'name'">
       <a ui-sref="things({ id: item.id })">
         <span class="thing_id id">{{ item.id }}</span>
         {{ item.name }}
