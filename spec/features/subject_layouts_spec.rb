@@ -13,7 +13,7 @@ RSpec.feature "SubjectLayouts", type: :feature, js: true do
     end
 
     it "has subjects dropdown active" do
-      find("#main-menubar ul.nav li.dropdown a", text: "Go To").click
+      find("#navbar-go-to-menu").click
       expect(page).to have_css("li.active", text: "Subjects")
     end
 

@@ -27,10 +27,9 @@ RSpec.feature "SubjectMaps", type: :feature, js: true do
       puts "database populated"
     end
 
-    visit "#{ui_path}/#/"
-    set_origin origin.formatted_address
-
+    #visit "#{ui_path}/#/"
     visit "#{ui_path}/#/subjects"
+    set_origin origin.formatted_address
     subjects_map_loaded!
   end
 
@@ -218,6 +217,8 @@ RSpec.feature "SubjectMaps", type: :feature, js: true do
     end
 
     it "displays distance when origin set" do
+      puts "[origin_set]: #{page.html}"
+
       expect(page).to have_css("span.distance", text: /miles/, visible: false)
 
       within("sd-area[label='Map']") do
@@ -320,6 +321,11 @@ RSpec.feature "SubjectMaps", type: :feature, js: true do
           click_marker "origin"
 
           using_wait_time 30 do
+            puts "[formatted_address]: #{cloc[:formatted_address]}"
+            puts "[lng]: #{cloc[:position][:lng]}"
+            puts "[lat]: #{cloc[:position][:lat]}"
+            puts "[check_map_origin]: #{page.html}"
+
             expect(page).to have_css("div.full_address", text: cloc[:formatted_address])
             expect(page).to have_css("div.position span.lng", text: cloc[:position][:lng])
             expect(page).to have_css("div.position span.lat", text: cloc[:position][:lat])
@@ -329,6 +335,9 @@ RSpec.feature "SubjectMaps", type: :feature, js: true do
     end
 
     it "updates map with current origin" do
+      puts "formatted_address|#{origin.formatted_address}|(updates map with current origin)"
+      puts ""
+
       cloc = CachedLocation.by_address(origin.formatted_address).first.location
       check_map_origin cloc
 

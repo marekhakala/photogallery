@@ -40,13 +40,13 @@ RSpec.feature "Authns", type: :feature, js: true do
           .merge(password_confirmation: "abc")
         signup bad_props, false
 
-        expect(page).to have_css("#signup-form > span.invalid",
+        expect(page).to have_css("#signup-form-errors li span.invalid",
             text: "Password confirmation doesn't match Password")
-        expect(page).to have_css("#signup-form > span.invalid", text: "Password is too short")
-        expect(page).to have_css("#signup-form > span.invalid", text: "Email has already been taken")
+        expect(page).to have_css("#signup-form-errors li span.invalid", text: "Password is too short")
+        expect(page).to have_css("#signup-form-errors li span.invalid", text: "Email has already been taken")
 
-        expect(page).to have_css("#signup-email span.invalid", text: "Has already been taken")
-        expect(page).to have_css("#signup-password span.invalid", text: "Is too short")
+        expect(page).to have_css("#signup-email-error", text: "Has already been taken")
+        expect(page).to have_css("#signup-password-error", text: "Is too short")
 
         within("#signup-password_confirmation") do
           expect(page).to have_css("span.invalid", text: "Doesn't match password")
@@ -58,15 +58,15 @@ RSpec.feature "Authns", type: :feature, js: true do
             .merge(password_confirmation: "abc")
         signup bad_props, false
 
-        expect(page).to have_css("#signup-email span.invalid")
-        expect(page).to have_css("#signup-password > span.invalid")
-        expect(page).to have_css("#signup-password_confirmation > span.invalid")
+        expect(page).to have_css("#signup-email-error")
+        expect(page).to have_css("#signup-password-error")
+        expect(page).to have_css("#signup-password-confirmation-error")
 
         fill_in("signup-email", with: "anylegal@email.com")
 
-        expect(page).to have_no_css("#signup-email span.invalid")
-        expect(page).to have_no_css("#signup-password > span.invalid")
-        expect(page).to have_no_css("#signup-password-confirm > span.invalid")
+        expect(page).to have_no_css("#signup-email-error")
+        expect(page).to have_no_css("#signup-password-error")
+        expect(page).to have_no_css("#signup-password-confirmation-error")
       end
     end
 
@@ -112,6 +112,7 @@ RSpec.feature "Authns", type: :feature, js: true do
   feature "login" do
     background(:each) do
       signup user_props
+      logout
       login user_props
     end
 
@@ -140,9 +141,9 @@ RSpec.feature "Authns", type: :feature, js: true do
       scenario "can access authenticated resources" do
         checkme
 
-        within ("div.checkme-user") do
-          expect(page).to have_css("label", text: /#{user_props[:name]}/)
-          expect(page).to have_css("label", text: /#{user_props[:email]}/)
+        within (".checkme-user") do
+          expect(page).to have_css("#authn-check-checkme", text: /#{user_props[:name]}/)
+          expect(page).to have_css("#authn-check-checkme", text: /#{user_props[:email]}/)
         end
       end
     end
@@ -174,6 +175,7 @@ RSpec.feature "Authns", type: :feature, js: true do
   feature "logout" do
     background(:each) do
       signup user_props
+      logout
       login user_props
     end
 
@@ -197,9 +199,9 @@ RSpec.feature "Authns", type: :feature, js: true do
       logout
       checkme
 
-      within ("div.checkme-user") do
-        expect(page).to have_no_css("label", text: /#{user_props[:name]}/)
-        expect(page).to have_css("label", text: /You need to sign in or sign up before continuing/, wait: 5)
+      within (".checkme-user") do
+        expect(page).to have_no_css("#authn-check-checkme", text: /#{user_props[:name]}/)
+        expect(page).to have_css("#authn-check-checkme", text: /You need to sign in or sign up before continuing/, wait: 5)
       end
     end
   end

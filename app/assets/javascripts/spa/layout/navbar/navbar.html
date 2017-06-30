@@ -11,7 +11,7 @@
      <div class="collapse navbar-collapse" id="bs-navbar-collapse">
       <ul class="nav navbar-nav">
         <li class="dropdown">
-          <button type="button" class="dropdown-toggle btn btn-default btn-md btn-dropmenu-nav" data-toggle="dropdown" role="button">
+          <button id="navbar-go-to-menu" type="button" class="dropdown-toggle btn btn-default btn-md btn-dropmenu-nav" data-toggle="dropdown" role="button">
             Go To <span class="caret"></span>
           </button>
           <ul class="dropdown-menu">
@@ -28,8 +28,8 @@
       </span>
       <ul class="nav navbar-nav navbar-right">
         <li id="login-dropdown" class="dropdown">
-          <button type="button" class="dropdown-toggle btn btn-default btn-md btn-dropmenu-nav" data-toggle="dropdown" role="button" aria-haspopup="true">
-            <span id="navbar-loginlabel">{{ $ctrl.getLoginLabel() }}</span>
+          <button id="navbar-btn-login" type="button" class="dropdown-toggle btn btn-default btn-md btn-dropmenu-nav" data-toggle="dropdown" role="button" aria-haspopup="true">
+            <span id="navbar-loginlabel">{{$ctrl.getLoginLabel()}}</span>
             <span class="caret"></span>
           </button>
           <ul class="dropdown-menu">

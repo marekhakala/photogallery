@@ -246,7 +246,7 @@ RSpec.feature "AuthzImages", type: :feature, js: true do
 
     context "user selects image" do
       before(:each) do
-        find("div.image-list .id", text: image.id, visible: false).find(:xpath, "..").click
+        find("div.image-list .id", text: image.id, visible: false).find(:xpath, "..").trigger('click')
       end
 
       it_behaves_like "displays image"

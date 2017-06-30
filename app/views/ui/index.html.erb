@@ -12,7 +12,9 @@
   <body>
     <div class="wrapper">
       <div class="content-wrapper">
-        <sd-navbar></sd-navbar>
+        <div class="main-menubar">
+          <sd-navbar></sd-navbar>
+        </div>
         <div id="display-area">
           <div ui-view></div>
           <script async defer src="https://maps.googleapis.com/maps/api/js?key=<%= ENV['GMAPS_JSMAPS_KEY'] %>"></script>
