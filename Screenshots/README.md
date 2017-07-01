@@ -39,7 +39,7 @@
 ## Things 2
 ![Things 2](12_things_2.png)
 
-## Profile
+## Things 3
 ![Things 3](13_things_3.png)
 
 ## Tags
