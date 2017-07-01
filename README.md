@@ -9,13 +9,15 @@ The Photo Gallery is a web application for photographers with Geo location featu
 ## Installation
 
 * Install all necessary ruby gems `bundle install`
-* Setup a SQLite3 or PostgreSQL connection `vim config/database.yml`
-* Setup a Mongo DB connection `vim config/mongoid.yml`
 
 ## Setup
 
+* Setup a SQLite3 or PostgreSQL connection `vim config/database.yml`
+* Setup a Mongo DB connection `vim config/mongoid.yml`
 * Create a database `bundle exec rake db:create`
 * Migrate database tables `bundle exec rake db:migrate`
+* Set Google Maps API key for back-end `echo 'GMAPS_JSMAPS_KEY: "API_KEY"' > config/application.yml'`
+* Set Google Maps API key for front-end `echo 'GMAPS_GEOCODE_KEY: "API_KEY"' >> config/application.yml`
 * Populate a database `rake ptourist:reset_all`
 
 ## Requirements
