@@ -19,7 +19,7 @@
 ![Subjects 3](05_subjects_3.png)
 
 ## Subjects 4
-![Subjects 4](06_subject_4.png)
+![Subjects 4](06_subjects_4.png)
 
 ## Identity check
 ![Identity check](07_identity_check.png)
